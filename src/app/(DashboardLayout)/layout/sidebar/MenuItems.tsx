@@ -10,6 +10,16 @@ import {
   IconBuildingCommunity,
   IconKey,
   IconLogin,
+  IconFileAnalytics,
+  IconMessage,
+  IconFolder,
+  IconShield,
+  IconChartHistogram,
+  IconRobot,
+  IconAlertCircle,
+  IconMail,
+  IconPassword,
+  IconHierarchy
 } from "@tabler/icons-react";
 
 import { uniqueId } from "lodash";
@@ -127,6 +137,134 @@ const Menuitems = [
     icon: IconSettings,
     href: "/security/settings",
   },
-];
+{
+    navlabel: true,
+    subheader: "Documents",
+  },
+  {
+    id: uniqueId(),
+    title: "Gestion des documents",
+    icon: IconFileAnalytics,
+    href: "/documents/list",
+    subtitle: "Documents actifs et archivés"
+  },
+  {
+    id: uniqueId(),
+    title: "Médias",
+    icon: IconFolder,
+    href: "/media/list",
+    subtitle: "Images, vidéos et fichiers multimédias"
+  },
+  {
+    id: uniqueId(),
+    title: "Versions & Audit",
+    icon: IconClock,
+    href: "/documents/versions",
+    subtitle: "Historique des modifications"
+  },
 
+  {
+    navlabel: true,
+    subheader: "Communication",
+  },
+  {
+    id: uniqueId(),
+    title: "Messagerie",
+    icon: IconMessage,
+    href: "/communication/messages",
+    subtitle: "Conversations et discussions"
+  },
+  {
+    id: uniqueId(),
+    title: "Publications",
+    icon: IconMail,
+    href: "/communication/publications",
+    subtitle: "Actualités et annonces"
+  },
+  {
+    id: uniqueId(),
+    title: "Sondages",
+    icon: IconChartHistogram,
+    href: "/communication/polls",
+    subtitle: "Création et résultats"
+  },
+
+  {
+    navlabel: true,
+    subheader: "Sécurité Avancée",
+  },
+  {
+    id: uniqueId(),
+    title: "Journal d'activité",
+    icon: IconAlertCircle,
+    href: "/security/access-logs",
+    subtitle: "Suivi des connexions"
+  },
+  {
+    id: uniqueId(),
+    title: "Contrôle IP",
+    icon: IconShield,
+    href: "/security/ip-control",
+    subtitle: "Liste noire des adresses"
+  },
+  {
+    id: uniqueId(),
+    title: "2FA & Authentification",
+    icon: IconPassword,
+    href: "/security/authentication",
+    subtitle: "Double authentification"
+  },
+
+  {
+    navlabel: true,
+    subheader: "Workflows",
+  },
+  {
+    id: uniqueId(),
+    title: "Processus métier",
+    icon: IconChartHistogram,
+    href: "/workflows/list",
+    subtitle: "Gestion des flux de travail"
+  },
+  {
+    id: uniqueId(),
+    title: "Tâches assignées",
+    icon: IconRobot,
+    href: "/workflows/tasks",
+    subtitle: "Suivi des actions en cours"
+  },
+  {
+    id: uniqueId(),
+    title: "Statistiques",
+    icon: IconChartHistogram,
+    href: "/workflows/stats",
+    subtitle: "Performances des processus"
+  },
+
+  {
+    navlabel: true,
+    subheader: "Administration",
+  },
+  {
+    id: uniqueId(),
+    title: "Rôles & Permissions",
+    icon: IconKey,
+    href: "/admin/roles",
+    subtitle: "Gestion des accès"
+  },
+  {
+    id: uniqueId(),
+    title: "Organigramme",
+    icon: IconHierarchy,
+    href: "/admin/organization",
+    subtitle: "Structure hiérarchique"
+  },
+  {
+    id: uniqueId(),
+    title: "Rapports système",
+    icon: IconFileAnalytics,
+    href: "/admin/reports",
+    subtitle: "Export des données"
+  }
+];
 export default Menuitems;
