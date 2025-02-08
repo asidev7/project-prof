@@ -48,7 +48,7 @@ const deleteRequest = async (url: string) => {
 };
 
 // Admin Process Service Request
-export const createServiceRequest = (requestId: string) => {
+export const createServiceRequestadmin = (requestId: string) => {
   return postRequest(`/services/admin-process-service-request/${requestId}/`, {});
 };
 

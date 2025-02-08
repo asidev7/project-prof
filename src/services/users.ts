@@ -143,10 +143,6 @@ export const deleteUser = async (userId: string) => {
   return await deleteRequest(`/utilisateurs/delete-user/${userId}/`);
 };
 
-// Supprimer plusieurs utilisateurs
-export const deleteUsers = async (userIds: string[]) => {
-  return await deleteRequest('/utilisateurs/delete-users/', { data: { userIds } });
-};
 
 // Détecter les anomalies d'accès
 export const detectAccessAnomalies = async () => {
