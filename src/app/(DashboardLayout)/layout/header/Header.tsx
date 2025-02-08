@@ -12,13 +12,9 @@ interface ItemType {
 
 const Header = ({toggleMobileSidebar}: ItemType) => {
 
-  // const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
-  // const lgDown = useMediaQuery((theme) => theme.breakpoints.down('lg'));
-
-
   const AppBarStyled = styled(AppBar)(({ theme }) => ({
     boxShadow: 'none',
-    background: theme.palette.background.paper,
+    background: '#4CAF50', // Green success color
     justifyContent: 'center',
     backdropFilter: 'blur(4px)',
     [theme.breakpoints.up('lg')]: {
@@ -27,11 +23,11 @@ const Header = ({toggleMobileSidebar}: ItemType) => {
   }));
   const ToolbarStyled = styled(Toolbar)(({ theme }) => ({
     width: '100%',
-    color: theme.palette.text.secondary,
+    color: 'white',
   }));
 
   return (
-    <AppBarStyled position="sticky" color="default">
+    <AppBarStyled position="sticky">
       <ToolbarStyled>
         <IconButton
           color="inherit"
@@ -44,26 +40,24 @@ const Header = ({toggleMobileSidebar}: ItemType) => {
             },
           }}
         >
-          <IconMenu width="20" height="20" />
+          <IconMenu width="20" height="20" color="white" />
         </IconButton>
-
 
         <IconButton
           size="large"
-          aria-label="show 11 new notifications"
+          aria-label="show notifications"
           color="inherit"
           aria-controls="msgs-menu"
           aria-haspopup="true"
         >
-          <Badge variant="dot" color="primary">
-            <IconBellRinging size="21" stroke="1.5" />
+          <Badge variant="dot" color="error">
+            <IconBellRinging size="21" stroke="1.5" color="white" />
           </Badge>
-
         </IconButton>
         <Box flexGrow={1} />
         <Stack spacing={1} direction="row" alignItems="center">
-          <Button variant="contained" component={Link} href="/authentication/login"   disableElevation color="primary" >
-            Login
+          <Button variant="contained" component={Link} href="/" disableElevation sx={{ backgroundColor: '#388E3C', '&:hover': { backgroundColor: '#2E7D32' } }}>
+            Utilisateur de systeme
           </Button>
           <Profile />
         </Stack>

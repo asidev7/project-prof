@@ -20,15 +20,19 @@ interface loginType {
 
 const AuthLogin = ({ title, subtitle, subtext }: loginType) => (
   <>
+    {/* Titre principal */}
     {title ? (
       <Typography fontWeight="700" variant="h2" mb={1}>
         {title}
       </Typography>
     ) : null}
 
+    {/* Texte introductif */}
     {subtext}
 
+    {/* Formulaire */}
     <Stack>
+      {/* Nom d'utilisateur */}
       <Box>
         <Typography
           variant="subtitle1"
@@ -37,10 +41,12 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => (
           htmlFor="username"
           mb="5px"
         >
-          Username
+          Nom d&apos;utilisateur ou adresse email
         </Typography>
-        <CustomTextField variant="outlined" fullWidth />
+        <CustomTextField id="username" variant="outlined" fullWidth />
       </Box>
+
+      {/* Mot de passe */}
       <Box mt="25px">
         <Typography
           variant="subtitle1"
@@ -49,35 +55,42 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => (
           htmlFor="password"
           mb="5px"
         >
-          Password
+          Mot de passe
         </Typography>
-        <CustomTextField type="password" variant="outlined" fullWidth />
+        <CustomTextField id="password" type="password" variant="outlined" fullWidth />
       </Box>
+
+      {/* Options supplémentaires */}
       <Stack
         justifyContent="space-between"
         direction="row"
         alignItems="center"
         my={2}
       >
+        {/* Checkbox : Se souvenir */}
         <FormGroup>
           <FormControlLabel
             control={<Checkbox defaultChecked />}
-            label="Remeber this Device"
+            label="Se souvenir de cet appareil"
           />
         </FormGroup>
+
+        {/* Lien : Mot de passe oublié */}
         <Typography
           component={Link}
-          href="/"
+          href="/mot-de-passe-oublie"
           fontWeight="500"
           sx={{
             textDecoration: "none",
             color: "primary.main",
           }}
         >
-          Forgot Password ?
+          Mot de passe oublié ?
         </Typography>
       </Stack>
     </Stack>
+
+    {/* Bouton de connexion */}
     <Box>
       <Button
         color="primary"
@@ -88,10 +101,22 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => (
         href="/"
         type="submit"
       >
-        Sign In
+        Se connecter
       </Button>
     </Box>
+
+    {/* Sous-titre ou texte après formulaire */}
     {subtitle}
+
+    {/* Devise */}
+    <Typography
+      variant="body2"
+      textAlign="center"
+      color="textSecondary"
+      mt={3}
+    >
+      Les lots aux gagnants, les bénéfices à toute la nation.
+    </Typography>
   </>
 );
 

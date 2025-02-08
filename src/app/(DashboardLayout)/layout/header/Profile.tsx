@@ -9,88 +9,105 @@ import {
   MenuItem,
   ListItemIcon,
   ListItemText,
+  Badge,
+  Typography,
 } from "@mui/material";
+import {
+  IconSettings,
+  IconBellRinging,
+  IconLogout,
+  IconUser,
+} from "@tabler/icons-react";
 
-import { IconListCheck, IconMail, IconUser } from "@tabler/icons-react";
+const Profile = ({ adminName = "Admin", userRole = "Administrateur" }) => {
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
-const Profile = ({ adminName = "Admin" }) => {
-  const [anchorEl2, setAnchorEl2] = useState(null);
-
-  const handleClick2 = (event) => {
-    setAnchorEl2(event.currentTarget);
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
   };
 
-  const handleClose2 = () => {
-    setAnchorEl2(null);
+  const handleClose = () => {
+    setAnchorEl(null);
   };
 
   return (
-    <Box>
+    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+      {/* Notification Icon */}
       <IconButton
-        size="large"
-        aria-label="show profile menu"
-        color="inherit"
-        aria-controls="profile-menu"
-        aria-haspopup="true"
         sx={{
-          ...(typeof anchorEl2 === "object" && {
-            color: "primary.main",
-          }),
+          backgroundColor: "#4CAF50",
+          "&:hover": { backgroundColor: "#45a049" },
         }}
-        onClick={handleClick2}
       >
-        <Avatar
-          src="/images/profile/user-1.jpg"
-          alt="profile image"
-          sx={{
-            width: 35,
-            height: 35,
-          }}
-        />
+        <Badge badgeContent={3} color="error">
+          <IconBellRinging color="white" />
+        </Badge>
       </IconButton>
 
-      {/* Menu du profil */}
+      {/* Profile Section */}
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+        <Avatar
+          src="/images/profile/user-1.jpg"
+          onClick={handleClick}
+          sx={{
+            cursor: "pointer",
+            width: 40,
+            height: 40,
+            border: "2px solid #e0e0e0",
+          }}
+        />
+        <Box sx={{ textAlign: "left" }}>
+          <Typography variant="body2" fontWeight="bold">
+            {adminName}
+          </Typography>
+          <Typography variant="caption" color="textSecondary">
+            {userRole}
+          </Typography>
+        </Box>
+      </Box>
+
+      {/* Profile Menu */}
       <Menu
-        id="profile-menu"
-        anchorEl={anchorEl2}
-        keepMounted
-        open={Boolean(anchorEl2)}
-        onClose={handleClose2}
-        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-        transformOrigin={{ horizontal: "right", vertical: "top" }}
-        sx={{
-          "& .MuiMenu-paper": {
-            width: "220px",
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+        PaperProps={{
+          sx: {
+            width: 200,
+            borderRadius: 2,
+            boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
           },
         }}
       >
-        <MenuItem>
+        <MenuItem onClick={handleClose}>
           <ListItemIcon>
-            <IconUser width={20} />
+            <IconUser size={20} />
           </ListItemIcon>
-          <ListItemText>Mon Profil</ListItemText>
+          <ListItemText>Profil</ListItemText>
         </MenuItem>
-        <MenuItem>
+
+        <MenuItem onClick={handleClose}>
           <ListItemIcon>
-            <IconMail width={20} />
+            <IconSettings size={20} />
           </ListItemIcon>
-          <ListItemText>Mon Compte</ListItemText>
+          <ListItemText>Paramètres</ListItemText>
         </MenuItem>
-        <MenuItem>
-          <ListItemIcon>
-            <IconListCheck width={20} />
-          </ListItemIcon>
-          <ListItemText>Mes Tâches</ListItemText>
-        </MenuItem>
-        <Box mt={1} py={1} px={2}>
+
+        <Box sx={{ p: 1, borderTop: "1px solid #f0f0f0" }}>
           <Button
-            href="/authentication/login"
-            variant="outlined"
-            color="primary"
-            component={Link}
             fullWidth
+            variant="outlined"
+            color="inherit"
+            component={Link}
+            href="/logout"
+            startIcon={<IconLogout size={18} />}
+            sx={{
+              justifyContent: "flex-start",
+              color: "error.main",
+              "&:hover": { backgroundColor: "#ffeeee" },
+            }}
           >
-            Se déconnecter ({adminName})
+            Déconnexion
           </Button>
         </Box>
       </Menu>
