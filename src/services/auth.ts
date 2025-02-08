@@ -1,8 +1,6 @@
-
 export const API_BASE_URL = 'https://www.backend.lnb-intranet.globalitnet.org';
 
-
-
+// Fonction de connexion de l'utilisateur
 export async function loginUser(credentials: { identifier: string; password: string }) {
   try {
     const response = await fetch(`${API_BASE_URL}/utilisateurs/connexion/`, {
@@ -16,7 +14,7 @@ export async function loginUser(credentials: { identifier: string; password: str
       throw new Error(result.message || 'Identifiants incorrects.');
     }
 
-    // Stockage du token JWT dans localStorage (ou vous pouvez utiliser un cookie ici)
+    // Stockage du token JWT dans localStorage
     localStorage.setItem('token', result.token);
 
     return { success: true, data: result };
@@ -25,6 +23,7 @@ export async function loginUser(credentials: { identifier: string; password: str
   }
 }
 
+// Récupérer le profil utilisateur
 const getUserProfile = async () => {
   const csrfToken = document.cookie.split('; ').find(row => row.startsWith('csrftoken='));
 
@@ -34,7 +33,7 @@ const getUserProfile = async () => {
   }
 
   try {
-    const response = await fetch('https://www.backend.lnb-intranet.globalitnet.org/utilisateurs/user-profile/', {
+    const response = await fetch(`${API_BASE_URL}/utilisateurs/user-profile/`, {
       method: 'GET',
       headers: {
         'accept': 'application/json',
@@ -55,10 +54,10 @@ const getUserProfile = async () => {
 
 getUserProfile();
 
-
+// Déconnexion de l'utilisateur
 const logoutUser = async () => {
   try {
-    const token = localStorage.getItem("token"); // Récupération du token JWT
+    const token = localStorage.getItem("token");
 
     if (!token) {
       throw new Error("Aucun token trouvé, vous êtes déjà déconnecté.");
@@ -66,9 +65,9 @@ const logoutUser = async () => {
 
     const response = await fetch(`${API_BASE_URL}/utilisateurs/logout/`, {
       method: "POST",
-      credentials: "include", // Nécessaire si l'authentification utilise des cookies
+      credentials: "include",
       headers: {
-        Authorization: `Bearer ${token}`, // Envoi du token JWT dans le header Authorization
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
     });
@@ -80,15 +79,15 @@ const logoutUser = async () => {
     // Suppression du token du localStorage
     localStorage.removeItem("token");
 
-    // Rediriger l'utilisateur vers la page de connexion après la déconnexion
-    window.location.href = "/auth/login"; // Ou utilisez `router.push("/login")` pour Next.js
+    // Rediriger l'utilisateur vers la page de connexion
+    window.location.href = "/auth/login";
 
   } catch (error) {
     console.error("Erreur lors de la déconnexion", error);
   }
 };
 
-
+// Fonction d'inscription
 export async function signupUser(userDetails: { nom: string; prenom: string; email: string; password: string; username: string }) {
   try {
     const response = await fetch(`${API_BASE_URL}/utilisateurs/inscription/`, {
@@ -112,6 +111,7 @@ export async function signupUser(userDetails: { nom: string; prenom: string; ema
   }
 }
 
+// Activer la vérification en deux étapes
 export async function activate2FA(userDetails: { user_id: number; email: string; otp_code: string }) {
   try {
     const response = await fetch(`${API_BASE_URL}/utilisateurs/activate-2fa/`, {
@@ -135,6 +135,7 @@ export async function activate2FA(userDetails: { user_id: number; email: string;
   }
 }
 
+// Envoyer un code OTP
 export async function sendOTPCode(userDetails: { user_id: number }) {
   try {
     const response = await fetch(`${API_BASE_URL}/utilisateurs/send-otp-code/`, {
@@ -147,6 +148,54 @@ export async function sendOTPCode(userDetails: { user_id: number }) {
 
     if (!response.ok) {
       throw new Error(result.message || 'Erreur lors de l\'envoi du code OTP.');
+    }
+
+    return { success: true, data: result };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Erreur inconnue',
+    };
+  }
+}
+
+// Demander la réinitialisation du mot de passe
+export async function forgotPassword(email: string) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/password/forgot_password/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.message || 'Erreur lors de la demande de réinitialisation du mot de passe.');
+    }
+
+    return { success: true, data: result };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Erreur inconnue',
+    };
+  }
+}
+
+// Mettre à jour le mot de passe
+export async function updatePassword(uid: string, token: string, newPassword: string) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/password/update_password/${uid}/${token}/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: newPassword }),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.message || 'Erreur lors de la mise à jour du mot de passe.');
     }
 
     return { success: true, data: result };

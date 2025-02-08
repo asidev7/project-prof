@@ -26,7 +26,7 @@ const Login2 = () => {
       const response = await loginUser(credentials);
       if (response.success) {
         setMessage({ type: 'success', text: 'Connexion réussie ! Redirection...' });
-        setTimeout(() => router.push('/dashboard'), 1500);
+        setTimeout(() => router.push('/dashboard'), 1000);
       } else {
         setMessage({ type: 'error', text: response.error || 'Une erreur est survenue.' });
       }
