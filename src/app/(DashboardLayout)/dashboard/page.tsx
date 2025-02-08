@@ -31,11 +31,31 @@ ChartJS.register(
   Legend
 );
 
+type User = {
+  month: string;
+  activeUsers: number;
+};
+
+type Group = {
+  groupName: string;
+  memberCount: number;
+};
+
+type Service = {
+  serviceName: string;
+  serviceUsage: number;
+};
+
+type Document = {
+  documentType: string;
+  documentCount: number;
+};
+
 const Dashboard = () => {
-  const [userData, setUserData] = useState([]);
-  const [groupData, setGroupData] = useState([]);
-  const [serviceData, setServiceData] = useState([]);
-  const [documentData, setDocumentData] = useState([]);
+  const [userData, setUserData] = useState<User[]>([]);
+  const [groupData, setGroupData] = useState<Group[]>([]);
+  const [serviceData, setServiceData] = useState<Service[]>([]);
+  const [documentData, setDocumentData] = useState<Document[]>([]);
 
   useEffect(() => {
     // Fetching data for the dashboard
@@ -56,7 +76,6 @@ const Dashboard = () => {
     axios.get('https://www.backend.lnb-intranet.globalitnet.org/services/list-services/')
       .then(response => {
         console.log("Service Data:", response.data);
-        // Check if response.data is an array, if not, handle accordingly
         if (Array.isArray(response.data)) {
           setServiceData(response.data);
         } else {
