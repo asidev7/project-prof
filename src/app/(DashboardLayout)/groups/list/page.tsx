@@ -38,13 +38,15 @@ interface Group {
   function: string;
   project: string;
   photo: string | null;
+  linked_groups: any[]; // Assurez-vous que c'est un tableau vide si non utilisé
+  members: any[]; // Même chose ici
 }
 
 const GroupsTable = () => {
   const [groups, setGroups] = useState<Group[]>([]);
   const [loading, setLoading] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
-  const [formData, setFormData] = useState<any>({});
+  const [formData, setFormData] = useState<Partial<Group>>({});
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [page, setPage] = useState(0);
@@ -68,41 +70,39 @@ const GroupsTable = () => {
     }
   };
 
-  const handleEditOpen = (group: Group) => {
-    setFormData(group);
-  };
-
-  const handleDelete = async (id: number) => {
-    if (confirm('Êtes-vous sûr de vouloir supprimer ce groupe ?')) {
-      try {
-        await fetch(`${API_URL}/utilisateurs_groupes/delete-group/${id}`, { method: 'DELETE' });
-        setSuccessMessage('Groupe supprimé avec succès');
-        fetchGroups();
-      } catch (error) {
-        setError('Erreur lors de la suppression du groupe');
-      }
-    }
-  };
-
   const handleCreateGroup = async () => {
+    // Validation des champs requis
+    if (!formData.name || !formData.email || !formData.phone || !formData.status || !formData.department || !formData.function || !formData.project) {
+      setError('Tous les champs requis doivent être remplis.');
+      return;
+    }
+
     try {
+      console.log('Form data avant envoi:', formData);  // Affiche les données envoyées
       const response = await fetch(`${API_URL}/utilisateurs_groupes/create-group/`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...formData,
+          linked_groups: [], // Définir un tableau vide pour linked_groups
+          members: [], // Définir un tableau vide pour members
+          photo: formData.photo || null, // S'assurer que photo peut être null
+        }),
       });
 
       const data = await response.json();
+      console.log('Réponse API:', data);  // Affiche la réponse de l'API
+
       if (data.success) {
         setSuccessMessage('Groupe ajouté avec succès');
         fetchGroups();
-        setCreateOpen(false); // Fermer le modal après création
+        setCreateOpen(false);
+        setFormData({}); // Réinitialiser le formulaire après soumission
       } else {
-        setError('Erreur lors de la création du groupe');
+        setError(data.error || 'Erreur lors de la création du groupe');  // Utiliser l'erreur retournée par l'API
       }
     } catch (error) {
+      console.error('Erreur lors de la requête:', error);  // Affiche les erreurs de la requête
       setError('Erreur lors de la création du groupe');
     }
   };
@@ -120,24 +120,14 @@ const GroupsTable = () => {
           Ajouter un groupe
         </Button>
       </Box>
-
+      
       <TableContainer component={Paper}>
         <Table>
           <TableHead sx={{ backgroundColor: '#1976d2', color: 'white' }}>
             <TableRow>
-              <TableCell sx={{ color: 'white' }}>Nom</TableCell>
-              <TableCell sx={{ color: 'white' }}>Email</TableCell>
-              <TableCell sx={{ color: 'white' }}>Téléphone</TableCell>
-              <TableCell sx={{ color: 'white' }}>Statut</TableCell>
-              <TableCell sx={{ color: 'white' }}>Rôle</TableCell>
-              <TableCell sx={{ color: 'white' }}>Description</TableCell>
-              <TableCell sx={{ color: 'white' }}>Adresse</TableCell>
-              <TableCell sx={{ color: 'white' }}>Créé le</TableCell>
-              <TableCell sx={{ color: 'white' }}>Mis à jour le</TableCell>
-              <TableCell sx={{ color: 'white' }}>Département</TableCell>
-              <TableCell sx={{ color: 'white' }}>Fonction</TableCell>
-              <TableCell sx={{ color: 'white' }}>Projet</TableCell>
-              <TableCell sx={{ color: 'white' }}>Actions</TableCell>
+              {[ 'Nom', 'Email', 'Téléphone', 'Statut', 'Rôle', 'Adresse', 'Département', 'Fonction', 'Projet', 'Description', 'Créé le', 'Mis à jour le', 'Actions'].map((col) => (
+                <TableCell key={col} sx={{ color: 'white' }}>{col}</TableCell>
+              ))}
             </TableRow>
           </TableHead>
           <TableBody>
@@ -150,23 +140,23 @@ const GroupsTable = () => {
                 <TableCell>{group.phone}</TableCell>
                 <TableCell>{group.status}</TableCell>
                 <TableCell>{group.role || 'Non défini'}</TableCell>
-                <TableCell>{group.bio}</TableCell>
                 <TableCell>{group.adresse}</TableCell>
-                <TableCell>{new Date(group.created_at).toLocaleString()}</TableCell>
-                <TableCell>{new Date(group.updated_at).toLocaleString()}</TableCell>
                 <TableCell>{group.department}</TableCell>
                 <TableCell>{group.function}</TableCell>
                 <TableCell>{group.project}</TableCell>
+                <TableCell>{group.bio}</TableCell>
+                <TableCell>{new Date(group.created_at).toLocaleString()}</TableCell>
+                <TableCell>{new Date(group.updated_at).toLocaleString()}</TableCell>
                 <TableCell>
-                  <Button onClick={() => handleEditOpen(group)}><Edit /></Button>
-                  <Button onClick={() => handleDelete(group.id)}><Delete color="error" /></Button>
+                  <Button><Edit /></Button>
+                  <Button><Delete color="error" /></Button>
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
-
+      
       <TablePagination
         component="div"
         count={groups.length}
@@ -176,128 +166,39 @@ const GroupsTable = () => {
         onRowsPerPageChange={(e) => setRowsPerPage(parseInt(e.target.value, 10))}
       />
 
-      <Snackbar open={!!error} autoHideDuration={6000} onClose={() => setError(null)}>
-        <Alert severity="error">{error}</Alert>
-      </Snackbar>
-      <Snackbar open={!!successMessage} autoHideDuration={6000} onClose={() => setSuccessMessage(null)}>
-        <Alert severity="success">{successMessage}</Alert>
-      </Snackbar>
-
-      {/* Modal pour ajouter un groupe */}
       <Modal open={createOpen} onClose={() => setCreateOpen(false)}>
-        <Box
-          sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            bgcolor: 'background.paper',
-            border: '2px solid #000',
-            boxShadow: 24,
-            p: 4,
-            width: 600,
-          }}
-        >
-          <Typography variant="h6" gutterBottom>Ajouter un nouveau groupe</Typography>
+        <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 600, bgcolor: 'background.paper', boxShadow: 24, p: 4 }}>
+          <Typography variant="h6" mb={2}>Ajouter un groupe</Typography>
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                label="Nom du groupe"
-                fullWidth
-                margin="normal"
-                value={formData.name || ''}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                label="Email"
-                fullWidth
-                margin="normal"
-                value={formData.email || ''}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                label="Téléphone"
-                fullWidth
-                margin="normal"
-                value={formData.phone || ''}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                label="Statut"
-                fullWidth
-                margin="normal"
-                value={formData.status || ''}
-                onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                label="Rôle"
-                fullWidth
-                margin="normal"
-                value={formData.role || ''}
-                onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                label="Adresse"
-                fullWidth
-                margin="normal"
-                value={formData.adresse || ''}
-                onChange={(e) => setFormData({ ...formData, adresse: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                label="Département"
-                fullWidth
-                margin="normal"
-                value={formData.department || ''}
-                onChange={(e) => setFormData({ ...formData, department: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                label="Fonction"
-                fullWidth
-                margin="normal"
-                value={formData.function || ''}
-                onChange={(e) => setFormData({ ...formData, function: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                label="Projet"
-                fullWidth
-                margin="normal"
-                value={formData.project || ''}
-                onChange={(e) => setFormData({ ...formData, project: e.target.value })}
-              />
-            </Grid>
+            {['name', 'email', 'phone', 'role', 'status', 'adresse', 'department', 'function', 'project'].map(field => (
+              <Grid item xs={6} key={field}>
+                <TextField 
+                  label={field.charAt(0).toUpperCase() + field.slice(1)}
+                  fullWidth 
+                  margin="dense" 
+                  value={formData[field] || ''} // Utiliser la valeur actuelle du champ
+                  onChange={(e) => setFormData((prev) => ({ ...prev, [field]: e.target.value }))} 
+                />
+              </Grid>
+            ))}
             <Grid item xs={12}>
-              <TextField
+              <TextField 
                 label="Description"
-                fullWidth
-                margin="normal"
-                value={formData.bio || ''}
-                onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+                fullWidth 
                 multiline
                 rows={4}
+                margin="dense" 
+                value={formData.bio || ''} // Utiliser la valeur actuelle de la bio
+                onChange={(e) => setFormData((prev) => ({ ...prev, bio: e.target.value }))} 
               />
             </Grid>
           </Grid>
-          <Button variant="contained" color="primary" onClick={handleCreateGroup} sx={{ mt: 2 }}>
-            Créer le groupe
-          </Button>
+          <Button variant="contained" color="primary" onClick={handleCreateGroup} sx={{ mt: 2 }}>Enregistrer</Button>
         </Box>
       </Modal>
+
+      {error && <Snackbar open={true} autoHideDuration={6000} onClose={() => setError(null)}><Alert severity="error">{error}</Alert></Snackbar>}
+      {successMessage && <Snackbar open={true} autoHideDuration={6000} onClose={() => setSuccessMessage(null)}><Alert severity="success">{successMessage}</Alert></Snackbar>}
     </div>
   );
 };
