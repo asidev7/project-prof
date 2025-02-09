@@ -16,6 +16,7 @@ import {
   TextField,
   TablePagination,
   Snackbar,
+  Grid,
   Alert,
 } from '@mui/material';
 import { Edit, Delete } from '@mui/icons-material';
@@ -43,7 +44,6 @@ const GroupsTable = () => {
   const [groups, setGroups] = useState<Group[]>([]);
   const [loading, setLoading] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
-  const [editOpen, setEditOpen] = useState(false);
   const [formData, setFormData] = useState<any>({});
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -69,7 +69,6 @@ const GroupsTable = () => {
   };
 
   const handleEditOpen = (group: Group) => {
-    setEditOpen(true);
     setFormData(group);
   };
 
@@ -82,6 +81,29 @@ const GroupsTable = () => {
       } catch (error) {
         setError('Erreur lors de la suppression du groupe');
       }
+    }
+  };
+
+  const handleCreateGroup = async () => {
+    try {
+      const response = await fetch(`${API_URL}/utilisateurs_groupes/create-group/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        setSuccessMessage('Groupe ajouté avec succès');
+        fetchGroups();
+        setCreateOpen(false); // Fermer le modal après création
+      } else {
+        setError('Erreur lors de la création du groupe');
+      }
+    } catch (error) {
+      setError('Erreur lors de la création du groupe');
     }
   };
 
@@ -160,6 +182,122 @@ const GroupsTable = () => {
       <Snackbar open={!!successMessage} autoHideDuration={6000} onClose={() => setSuccessMessage(null)}>
         <Alert severity="success">{successMessage}</Alert>
       </Snackbar>
+
+      {/* Modal pour ajouter un groupe */}
+      <Modal open={createOpen} onClose={() => setCreateOpen(false)}>
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            bgcolor: 'background.paper',
+            border: '2px solid #000',
+            boxShadow: 24,
+            p: 4,
+            width: 600,
+          }}
+        >
+          <Typography variant="h6" gutterBottom>Ajouter un nouveau groupe</Typography>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Nom du groupe"
+                fullWidth
+                margin="normal"
+                value={formData.name || ''}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Email"
+                fullWidth
+                margin="normal"
+                value={formData.email || ''}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Téléphone"
+                fullWidth
+                margin="normal"
+                value={formData.phone || ''}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Statut"
+                fullWidth
+                margin="normal"
+                value={formData.status || ''}
+                onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Rôle"
+                fullWidth
+                margin="normal"
+                value={formData.role || ''}
+                onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Adresse"
+                fullWidth
+                margin="normal"
+                value={formData.adresse || ''}
+                onChange={(e) => setFormData({ ...formData, adresse: e.target.value })}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Département"
+                fullWidth
+                margin="normal"
+                value={formData.department || ''}
+                onChange={(e) => setFormData({ ...formData, department: e.target.value })}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Fonction"
+                fullWidth
+                margin="normal"
+                value={formData.function || ''}
+                onChange={(e) => setFormData({ ...formData, function: e.target.value })}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Projet"
+                fullWidth
+                margin="normal"
+                value={formData.project || ''}
+                onChange={(e) => setFormData({ ...formData, project: e.target.value })}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                label="Description"
+                fullWidth
+                margin="normal"
+                value={formData.bio || ''}
+                onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+                multiline
+                rows={4}
+              />
+            </Grid>
+          </Grid>
+          <Button variant="contained" color="primary" onClick={handleCreateGroup} sx={{ mt: 2 }}>
+            Créer le groupe
+          </Button>
+        </Box>
+      </Modal>
     </div>
   );
 };
