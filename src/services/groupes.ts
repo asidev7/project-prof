@@ -92,9 +92,16 @@ export const linkSubgroups = (data: any) => {
 };
 
 // List Groups
-export const listGroups = () => {
-  return getRequest('/utilisateurs_groupes/list-groups/');
+export const listGroups = async () => {
+  try {
+    const response = await getRequest('/utilisateurs_groupes/list-groups/');
+    return response.groups || []; // S'assurer de retourner le tableau "groups"
+  } catch (error) {
+    console.error("Erreur lors de la récupération des groupes:", error);
+    throw error;
+  }
 };
+
 
 // List Subgroups
 export const listSubgroups = () => {
