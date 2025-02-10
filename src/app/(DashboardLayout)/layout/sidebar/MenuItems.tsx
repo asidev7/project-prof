@@ -1,4 +1,5 @@
 import {
+IconLayoutDashboard,
   IconUsers,
   IconUserPlus,
   IconLock,
@@ -19,12 +20,19 @@ import {
   IconAlertCircle,
   IconMail,
   IconPassword,
-  IconHierarchy
+  IconHierarchy,
+  
 } from "@tabler/icons-react";
-
 import { uniqueId } from "lodash";
 
 const Menuitems = [
+    {
+    id: uniqueId(),
+    title:"Tableau bord",
+    icon: IconLayoutDashboard,
+    href: "/dashboard",
+  },
+
   {
     navlabel: true,
     subheader: "Utilisateurs",

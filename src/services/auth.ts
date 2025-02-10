@@ -23,37 +23,7 @@ export async function loginUser(credentials: { identifier: string; password: str
   }
 }
 
-// Récupérer le profil utilisateur
-const getUserProfile = async () => {
-  const csrfToken = document.cookie.split('; ').find(row => row.startsWith('csrftoken='));
-
-  if (!csrfToken) {
-    console.error('CSRF token not found');
-    return;
-  }
-
-  try {
-    const response = await fetch(`${API_BASE_URL}/utilisateurs/user-profile/`, {
-      method: 'GET',
-      headers: {
-        'accept': 'application/json',
-        'X-CSRFTOKEN': csrfToken.split('=')[1]  // Récupérer le token depuis les cookies
-      }
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      console.log('User profile data:', data);
-    } else {
-      console.error('Error fetching user profile:', response.statusText);
-    }
-  } catch (error) {
-    console.error('Request failed', error);
-  }
-};
-
-getUserProfile();
-
+// Récupérer 
 // Déconnexion de l'utilisateur
 const logoutUser = async () => {
   try {
