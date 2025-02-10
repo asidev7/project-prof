@@ -78,7 +78,7 @@ const MSidebar = ({
                 {/* Sidebar Items */}
                 {/* ------------------------------------------- */}
                 <SidebarItems />
-                <Upgrade />
+                <Updrade />
               </Box>
             </Sidebar >
           </Box>
@@ -122,7 +122,7 @@ const MSidebar = ({
           {/* Sidebar Items */}
           {/* ------------------------------------------- */}
           <SidebarItems />
-          <Upgrade />
+          <Updrade />
         </Sidebar>
       </Box>
       {/* ------------------------------------------- */}
