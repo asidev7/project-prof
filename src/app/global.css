@@ -1,0 +1,35 @@
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    list-style: none;
+    padding: 0;
+}
+
+.pagination .page,
+.pagination .previous,
+.pagination .next {
+    padding: 8px 12px;
+    margin: 0 5px;
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.pagination .active {
+    background-color: #0056b3;
+}
+
+.pagination .page:hover,
+.pagination .previous:hover,
+.pagination .next:hover {
+    background-color: #0056b3;
+}
+
+.pagination .break {
+    padding: 8px 12px;
+    margin: 0 5px;
+    font-weight: bold;
+}
