@@ -63,7 +63,7 @@ const MSidebar = ({
           >
             <Sidebar
               width={'270px'}
-              collapsewidth="80px"
+              collapseWidth="80px"
               open={isSidebarOpen}
               themeColor="#5d87ff"
               themeSecondaryColor="#49beff"
