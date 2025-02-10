@@ -1,6 +1,6 @@
 import React from 'react';
 
-const UsersPermissionsPage = () => {
+const UserRole = () => {
     return (
         <div>
             <h1>Page: /users/permissions</h1>
@@ -8,4 +8,4 @@ const UsersPermissionsPage = () => {
     );
 };
 
-export default UsersPermissionsPage;
+export default UserRole;

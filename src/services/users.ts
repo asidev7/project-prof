@@ -17,7 +17,12 @@ const apiClient = axios.create({
 const getRequest = async (url: string) => {
   try {
     const response = await apiClient.get(url);
-    return response.data;
+    // Assurez-vous que la réponse contient des données valides au format JSON
+    if (response && response.data) {
+      return response.data;
+    } else {
+      throw new Error('Réponse de l\'API vide ou invalide');
+    }
   } catch (error) {
     console.error('Erreur lors de la requête GET', error);
     throw error;
@@ -28,7 +33,12 @@ const getRequest = async (url: string) => {
 const postRequest = async (url: string, data: any) => {
   try {
     const response = await apiClient.post(url, data);
-    return response.data;
+    // Vérifiez la validité de la réponse
+    if (response && response.data) {
+      return response.data;
+    } else {
+      throw new Error('Réponse de l\'API vide ou invalide');
+    }
   } catch (error) {
     console.error('Erreur lors de la requête POST', error);
     throw error;
@@ -39,7 +49,11 @@ const postRequest = async (url: string, data: any) => {
 const putRequest = async (url: string, data: any) => {
   try {
     const response = await apiClient.put(url, data);
-    return response.data;
+    if (response && response.data) {
+      return response.data;
+    } else {
+      throw new Error('Réponse de l\'API vide ou invalide');
+    }
   } catch (error) {
     console.error('Erreur lors de la requête PUT', error);
     throw error;
@@ -50,7 +64,11 @@ const putRequest = async (url: string, data: any) => {
 const deleteRequest = async (url: string) => {
   try {
     const response = await apiClient.delete(url);
-    return response.data;
+    if (response && response.data) {
+      return response.data;
+    } else {
+      throw new Error('Réponse de l\'API vide ou invalide');
+    }
   } catch (error) {
     console.error('Erreur lors de la requête DELETE', error);
     throw error;
@@ -58,10 +76,6 @@ const deleteRequest = async (url: string) => {
 };
 
 // --- Fonctions API spécifiques aux utilisateurs ---
-
-
-
-
 
 // Accéder aux tendances des utilisateurs
 export const getAccessTrends = async () => {
@@ -143,7 +157,6 @@ export const deleteUser = async (userId: string) => {
   return await deleteRequest(`/utilisateurs/delete-user/${userId}/`);
 };
 
-
 // Détecter les anomalies d'accès
 export const detectAccessAnomalies = async () => {
   return await getRequest('/utilisateurs/detect-access-anomalies/');
@@ -171,57 +184,22 @@ export const registerUser = async (userData: { username: string, password: strin
 
 // Obtenir la liste des utilisateurs
 export const getUsersList = async () => {
-  return await getRequest('/utilisateurs/list-users/');
+  try {
+    const data = await getRequest('/utilisateurs/list-users/');
+    if (Array.isArray(data)) {
+      return data;
+    } else {
+      throw new Error('La réponse de l\'API n\'est pas un tableau');
+    }
+  } catch (error) {
+    console.error('Erreur lors de l\'obtention de la liste des utilisateurs', error);
+    throw error;
+  }
 };
 
-// Gérer les demandes de congé
-export const manageLeaveRequests = async () => {
-  return await getRequest('/utilisateurs/manage-leave-requests/');
-};
-
-// Modifier le solde de congé d'un utilisateur
-export const modifyLeaveBalance = async (leaveData: { userId: string, balance: number }) => {
-  return await postRequest('/utilisateurs/modify-leave-balance/', leaveData);
-};
-
-// Obtenir les notifications des utilisateurs
-export const getUserNotifications = async () => {
-  return await getRequest('/utilisateurs/notifications/');
-};
-
-// Retirer une adresse IP de la liste noire
-export const removeIpFromBlacklist = async (ipAddress: string) => {
-  return await postRequest('/utilisateurs/remove-ip-from-blacklist/', { ipAddress });
-};
-
-// Restaurer un utilisateur
-export const restoreUser = async (userId: string) => {
-  return await putRequest(`/utilisateurs/restore-user/`, { userId });
-};
-
-// Planifier l'export d'un rapport
-export const scheduleReportExport = async (reportData: { userId: string, reportType: string }) => {
-  return await postRequest('/utilisateurs/schedule-report-export/', reportData);
-};
-
-// Envoyer un code OTP
-export const sendOtpCode = async (userId: string) => {
-  return await postRequest('/utilisateurs/send-otp-code/', { userId });
-};
-
-// Définir un délai d'inactivité
-export const setInactivityTimeout = async (timeout: number) => {
-  return await postRequest('/utilisateurs/set-inactivity-timeout/', { timeout });
-};
-
-// Définir un supérieur pour un utilisateur
-export const setSuperior = async (userId: string, superiorId: string) => {
-  return await postRequest('/utilisateurs/set-superieur/', { userId, superiorId });
-};
-
-// Supprimer un utilisateur (soft delete)
-export const softDeleteUser = async (userId: string) => {
-  return await deleteRequest(`/utilisateurs/soft-delete-user/${userId}/`);
+// Obtenir le profil d'un utilisateur
+export const getUserProfile = async (userId: string) => {
+  return await getRequest(`/utilisateurs/user-profile/${userId}`);
 };
 
 // Mettre à jour les préférences d'un utilisateur
@@ -234,13 +212,7 @@ export const updateUser = async (userId: string, userData: any) => {
   return await putRequest(`/utilisateurs/update-user/${userId}/`, userData);
 };
 
-// Obtenir la liste des utilisateurs
-export const getUserList = async () => {
-  return await getRequest('/utilisateurs/user-list/');
+// Restaurer un utilisateur
+export const restoreUser = async (userId: string) => {
+  return await putRequest(`/utilisateurs/restore-user/`, { userId });
 };
-
-// Obtenir le profil d'un utilisateur
-export const getUserProfile = async (userId: string) => {
-  return await getRequest(`/utilisateurs/user-profile/`);
-};
-
