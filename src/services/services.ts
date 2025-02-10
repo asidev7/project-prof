@@ -1,7 +1,32 @@
 import axios from 'axios';
 
-// URL de base de votre API
+// URL de base de l'API
 const API_BASE_URL = 'https://www.backend.lnb-intranet.globalitnet.org';
+
+export const getRequestHistory = async (requestId: string) => {
+  try {
+    const response = await getRequest(`/services/request-history/${requestId}/`);
+    return response; // Retourne les données de l'historique
+  } catch (error) {
+    console.error("Erreur lors de la récupération de l'historique de la demande :", error);
+    throw error; // Relance l'erreur pour une gestion ultérieure
+  }
+};
+
+// Fonction générique pour effectuer les requêtes POST (Unique déclaration)
+const postRequest = async (url: string, data: any) => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}${url}`, data, {
+      headers: {
+        'Content-Type': 'application/json', // Assurez-vous que l'API attend du JSON
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    console.error('Erreur lors de la requête POST:', error.response?.data || error.message);
+    throw error;
+  }
+};
 
 // Fonction générique pour effectuer les requêtes GET
 const getRequest = async (url: string) => {
@@ -10,17 +35,6 @@ const getRequest = async (url: string) => {
     return response.data;
   } catch (error) {
     console.error('Erreur GET:', error);
-    throw error;
-  }
-};
-
-// Fonction générique pour effectuer les requêtes POST
-const postRequest = async (url: string, data: any) => {
-  try {
-    const response = await axios.post(`${API_BASE_URL}${url}`, data);
-    return response.data;
-  } catch (error) {
-    console.error('Erreur POST:', error);
     throw error;
   }
 };
@@ -44,6 +58,22 @@ const deleteRequest = async (url: string) => {
   } catch (error) {
     console.error('Erreur DELETE:', error);
     throw error;
+  }
+};
+
+// Fonction pour créer un nouveau service (Réutilise `postRequest`)
+export const createService = async (data: any) => {
+  return await postRequest('/services/create-service/', data);
+};
+
+// Fonction pour récupérer la liste des services
+export const getServices = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/services/list-services/`);
+    return response.data.services; // Assurez-vous que la structure des données est correcte
+  } catch (error) {
+    console.error("Erreur lors de la récupération des services:", error);
+    throw error; // Permet à la page d'afficher l'erreur
   }
 };
 
@@ -134,10 +164,6 @@ export const createApplication = (userId: string, data: any) => {
 
 export const createServiceRequest = (data: any) => {
   return postRequest('/services/create-service-request/', data);
-};
-
-export const createService = (data: any) => {
-  return postRequest('/services/create-service/', data);
 };
 
 export const deleteServiceRequest = (requestId: string) => {
