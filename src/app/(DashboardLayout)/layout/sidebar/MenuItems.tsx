@@ -151,7 +151,7 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
-    title: "Gestion des documents",
+    title: "Liste des documents",
     icon: IconFileAnalytics,
     href: "/documents/list",
     subtitle: "Documents actifs et archivés"
@@ -165,10 +165,33 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
-    title: "Versions & Audit",
+    title: "Versions",
     icon: IconClock,
     href: "/documents/versions",
     subtitle: "Historique des modifications"
+  },
+
+   {
+    id: uniqueId(),
+    title: "Audit",
+    icon: IconClock,
+    href: "/documents/audit",
+    subtitle: "Historique des modifications"
+  },
+
+    {
+    id: uniqueId(),
+    title: "Catégorie Document",
+    icon: IconClock,
+    href: "/documents/category",
+    subtitle: "Ajout de catégory de document"
+  },
+  {
+    id: uniqueId(),
+    title: "Dossier ",
+    icon: IconClock,
+    href: "/documents/dossier",
+    subtitle: "Ajout dossier"
   },
 
    {

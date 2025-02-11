@@ -17,19 +17,10 @@ const DocumentImport = () => {
   const [file, setFile] = useState<File | null>(null);
   const [uploadedBy, setUploadedBy] = useState('');
   const [category, setCategory] = useState('');
-  const [tags, setTags] = useState<string[]>([]);
-  const [newTag, setNewTag] = useState('');
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       setFile(event.target.files[0]);
-    }
-  };
-
-  const handleTagAdd = () => {
-    if (newTag.trim() !== '' && !tags.includes(newTag)) {
-      setTags([...tags, newTag]);
-      setNewTag('');
     }
   };
 
@@ -41,7 +32,6 @@ const DocumentImport = () => {
     console.log('Fichier:', file);
     console.log('Ajouté par:', uploadedBy);
     console.log('Catégorie:', category);
-    console.log('Tags:', tags);
   };
 
   return (
@@ -70,8 +60,19 @@ const DocumentImport = () => {
             </Select>
           </FormControl>
 
-          
-          {file && <Typography variant="body2">{file.name}</Typography>}
+          {/* Champ pour télécharger le fichier */}
+          <Button
+            variant="outlined"
+            component="label"
+            startIcon={<CloudUploadIcon />}
+            fullWidth
+            sx={{ marginTop: 2 }}
+          >
+            Télécharger un document
+            <input type="file" accept={fileTypes.join(',')} hidden onChange={handleFileChange} />
+          </Button>
+
+          {file && <Typography variant="body2" sx={{ marginTop: 1 }}>{file.name}</Typography>}
 
           <FormControl fullWidth>
             <InputLabel>Ajouté par</InputLabel>
@@ -87,13 +88,7 @@ const DocumentImport = () => {
             </Select>
           </FormControl>
 
-          <Box display="flex" gap={2} alignItems="center">
-            <TextField label="Ajouter un tag" variant="outlined" value={newTag} onChange={(e) => setNewTag(e.target.value)} />
-            <Button variant="contained" onClick={handleTagAdd}>+</Button>
-          </Box>
-          {tags.length > 0 && <Typography variant="body2">Tags: {tags.join(', ')}</Typography>}
-
-          <Button type="submit" variant="contained" color="primary" sx={{ alignSelf: 'center', width: '50%' }}>
+          <Button type="submit" variant="contained" color="primary" sx={{ alignSelf: 'center', width: '50%', marginTop: 3 }}>
             Envoyer
           </Button>
         </Box>
