@@ -1,71 +1,98 @@
-"use client"
+'use client';
 
 import React, { useEffect, useState } from 'react';
-import { getRequestHistory } from "@/services/services"; // Importez la fonction getRequestHistory
+import { Typography, Box, Card, CardContent, Grid, Chip } from '@mui/material';
+import PageContainer from '@/app/(DashboardLayout)/components/container/PageContainer';
+import DashboardCard from '@/app/(DashboardLayout)/components/shared/DashboardCard';
+import { getRequestHistory } from "@/services/services"; // Importe la fonction getRequestHistory
 
-const ServicesHistoryPage = () => {
-    const [history, setHistory] = useState<any[]>([]); // État pour stocker les historiques
-    const [loading, setLoading] = useState<boolean>(true); // État pour gérer le chargement
-    const [error, setError] = useState<string | null>(null); // État pour gérer les erreurs
-
-    // Fonction pour récupérer l'historique
-    const fetchHistory = async () => {
-        try {
-            setLoading(true);
-            const requestId = "12345"; // Remplacez par l'ID de la demande de service ou récupérez-le dynamiquement
-            const data = await getRequestHistory(requestId); // Appel de la fonction getRequestHistory
-            setHistory(data); // Mettre à jour l'état avec les données reçues
-        } catch (err) {
-            console.error("Erreur lors de la récupération de l'historique :", err);
-            setError("Erreur lors de la récupération de l'historique. Veuillez réessayer.");
-        } finally {
-            setLoading(false); // Arrêter le chargement
-        }
-    };
-
-    // Utiliser useEffect pour appeler fetchHistory au chargement de la page
-    useEffect(() => {
-        fetchHistory();
-    }, []);
-
-    // Afficher un message de chargement
-    if (loading) {
-        return <div>Chargement en cours...</div>;
-    }
-
-    // Afficher un message d'erreur
-    if (error) {
-        return <div style={{ color: 'red' }}>{error}</div>;
-    }
-
-    // Afficher la liste des historiques
-    return (
-        <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
-            <h1>Historique des demandes de service</h1>
-            {history.length > 0 ? (
-                <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '20px' }}>
-                    <thead>
-                        <tr style={{ backgroundColor: '#f4f4f4' }}>
-                            <th style={{ padding: '10px', border: '1px solid #ddd' }}>Date</th>
-                            <th style={{ padding: '10px', border: '1px solid #ddd' }}>Événement</th>
-                            <th style={{ padding: '10px', border: '1px solid #ddd' }}>Détails</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {history.map((item, index) => (
-                            <tr key={index} style={{ backgroundColor: index % 2 === 0 ? '#f9f9f9' : '#fff' }}>
-                                <td style={{ padding: '10px', border: '1px solid #ddd' }}>{item.date}</td>
-                                <td style={{ padding: '10px', border: '1px solid #ddd' }}>{item.event}</td>
-                                <td style={{ padding: '10px', border: '1px solid #ddd' }}>{item.details}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            ) : (
-                <p>Aucun historique disponible.</p>
-            )}
-        </div>
-    );
+// Fonction pour mapper le status en couleur valide pour Chip
+const getChipColor = (status: string): "default" | "error" | "primary" | "secondary" | "info" | "success" | "warning" => {
+  const colorMap: { [key: string]: "default" | "error" | "primary" | "secondary" | "info" | "success" | "warning" } = {
+    success: "success",
+    warning: "warning",
+    error: "error",
+    // Tu peux ajouter d'autres valeurs si nécessaire, et les mapper à "default"
+  };
+  return colorMap[status] || "default"; // Valeur par défaut
 };
 
-export default ServicesHistoryPage;
+const ServiceHistory = () => {
+  const [historyData, setHistoryData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Récupérer l'historique des services
+  useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        // Remplace 'request_id' par l'ID de la demande que tu souhaites récupérer
+        const requestId = '123'; // Exemple d'ID de demande
+        const data = await getRequestHistory(requestId);
+
+        if (Array.isArray(data)) {
+          setHistoryData(data); // Met à jour l'état avec les données de l'historique
+        } else {
+          setError('Données reçues invalides');
+        }
+        setLoading(false);
+      } catch (error: any) {
+        setError("Erreur lors de la récupération de l'historique.");
+        setLoading(false);
+        console.error(error); // Pour voir plus de détails sur l'erreur dans la console
+      }
+    };
+
+    fetchHistory();
+  }, []);
+
+  if (loading) return <div>Chargement en cours...</div>;
+  if (error) return <div>{error}</div>;
+
+  return (
+    <PageContainer title="Historique des Services" description="Voici l'historique des actions effectuées sur les services.">
+      <DashboardCard title="Historique des Services">
+        <Box sx={{ mt: 2 }}>
+          {historyData.map((item, index) => (
+            <Card
+              key={index}
+              sx={{
+                mb: 2,
+                borderLeft: 4,
+                borderColor:
+                  item.status === 'success'
+                    ? 'green'
+                    : item.status === 'warning'
+                    ? 'orange'
+                    : 'red',
+              }}
+            >
+              <CardContent>
+                <Grid container spacing={2} alignItems="center">
+                  <Grid item xs={12} sm={4}>
+                    <Typography variant="h6">Action {index + 1}</Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      {new Date(item.timestamp).toLocaleString()} {/* Format de date */}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Typography variant="body1">Statut: {item.status}</Typography>
+                  </Grid>
+                  <Grid item xs={12} sm={2} container justifyContent="flex-end">
+                    <Chip
+                      label={item.status.charAt(0).toUpperCase() + item.status.slice(1)}
+                      color={getChipColor(item.status)}
+                      size="small"
+                    />
+                  </Grid>
+                </Grid>
+              </CardContent>
+            </Card>
+          ))}
+        </Box>
+      </DashboardCard>
+    </PageContainer>
+  );
+};
+
+export default ServiceHistory;

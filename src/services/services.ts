@@ -5,12 +5,39 @@ const API_BASE_URL = 'https://www.backend.lnb-intranet.globalitnet.org';
 
 export const getRequestHistory = async (requestId: string) => {
   try {
-    const response = await getRequest(`/services/request-history/${requestId}/`);
-    return response; // Retourne les données de l'historique
-  } catch (error) {
-    console.error("Erreur lors de la récupération de l'historique de la demande :", error);
-    throw error; // Relance l'erreur pour une gestion ultérieure
+    console.log('Request ID:', requestId); // Vérification de la valeur de requestId
+
+    if (!requestId) {
+      throw new Error('Request ID is required');
+    }
+
+    const csrfToken = getCsrfToken(); // Récupère dynamiquement le CSRF token
+
+    const response = await axios.get(`${API_BASE_URL}/services/request-history/${requestId}/`, {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-CSRFTOKEN': csrfToken, // CSRF token
+        'Authorization': `Bearer ${localStorage.getItem('authToken')}`, // Auth token
+      },
+    });
+
+    console.log('Response Data:', response.data); // Vérification de la réponse API
+    return response.data; // Retourne les données de l'historique
+  } catch (error: any) {
+    console.error("Erreur lors de la récupération de l'historique de la demande :", error.response?.data || error.message);
+    throw error; // Relance l'erreur pour gestion ultérieure
   }
+};
+
+
+// Fonction pour récupérer le CSRF token depuis les cookies (ou autre méthode si nécessaire)
+const getCsrfToken = (): string => {
+  const cookieValue = document.cookie
+    .split('; ')
+    .find(row => row.startsWith('csrftoken='))
+    ?.split('=')[1];
+  return cookieValue || ''; // Retourne une valeur par défaut vide si non trouvé
 };
 
 // Fonction générique pour effectuer les requêtes POST (Unique déclaration)
@@ -61,10 +88,41 @@ const deleteRequest = async (url: string) => {
   }
 };
 
-// Fonction pour créer un nouveau service (Réutilise `postRequest`)
-export const createService = async (data: any) => {
-  return await postRequest('/services/create-service/', data);
+
+
+
+
+
+// Fonction pour créer un nouveau service
+export const createService = async (data: {
+  name: string;
+  description: string;
+  department_id: number;
+  function_id: number;
+  chef_id: number;
+}) => {
+  try {
+    const token = localStorage.getItem('authToken'); // Récupère le token d'authentification
+    const csrfToken = getCsrfToken(); // Utilise la méthode pour récupérer le CSRF token
+
+    const response = await axios.post(`${API_BASE_URL}/services/create-service/`, data, {
+      headers: {
+        'accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-CSRFTOKEN': csrfToken, // CSRF token
+        'Authorization': `Bearer ${token}`, // Token d'authentification si nécessaire
+      },
+    });
+
+    return response.data; // Retourne les données de la réponse
+  } catch (error: any) {
+    console.error('Erreur lors de la création du service:', error.response?.data || error.message);
+    throw error; // Relance l'erreur pour une gestion ultérieure
+  }
 };
+
+
+
 
 // Fonction pour récupérer la liste des services
 export const getServices = async () => {

@@ -2,18 +2,13 @@
 
 import React, { useState } from 'react';
 import { TextField, Button, Container, Typography, Paper } from '@mui/material';
-
-const API_BASE_URL = 'https://www.backend.lnb-intranet.globalitnet.org'; // URL de base de l'API
+import { createService } from "@/services/services"; 
 
 const ServicesAddPage = () => {
     const [serviceData, setServiceData] = useState({
         name: '',
-        description: '',
+        description: '', // Champ description
     });
-
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [message, setMessage] = useState<string | null>(null);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -23,33 +18,26 @@ const ServicesAddPage = () => {
         }));
     };
 
+    const getCsrfToken = (): string => {
+        const cookieValue = document.cookie
+            .split('; ')
+            .find(row => row.startsWith('csrftoken='))
+            ?.split('=')[1];
+        return cookieValue || ''; // Retourne une valeur par défaut vide si non trouvé
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setLoading(true);
-        setError(null);
-        setMessage(null);
+        const csrfToken = getCsrfToken(); // Récupère le CSRF token
 
         try {
-            const response = await fetch(`${API_BASE_URL}/services/create/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(serviceData),
-            });
-
-            const data = await response.json();
-
-            if (response.ok && data?.success) {
-                setMessage('Service ajouté avec succès!');
-                setServiceData({ name: '', description: '' });
-            } else {
-               setError(data?.message || `Erreur lors de l'ajout du service`);
-            }
-        } catch (err) {
-            setError('Erreur lors de la communication avec le serveur');
-        } finally {
-            setLoading(false);
+            const response = await createService(serviceData, csrfToken); // Passe le CSRF token dans la requête
+            console.log('Service créé avec succès:', response);
+            alert('Service créé avec succès !');
+            setServiceData({ name: '', description: '' }); // Réinitialise le formulaire
+        } catch (error) {
+            console.error('Erreur lors de la création du service:', error);
+            alert('Une erreur est survenue lors de la création du service.');
         }
     };
 
@@ -59,8 +47,6 @@ const ServicesAddPage = () => {
                 <Typography variant="h5" gutterBottom>
                     Ajouter un Service
                 </Typography>
-                {error && <Typography color="error" gutterBottom>{error}</Typography>}
-                {message && <Typography color="primary" gutterBottom>{message}</Typography>}
                 <form onSubmit={handleSubmit}>
                     <TextField
                         label="Nom du Service"
@@ -87,9 +73,8 @@ const ServicesAddPage = () => {
                         type="submit"
                         fullWidth
                         sx={{ marginTop: 2 }}
-                        disabled={loading}
                     >
-                        {loading ? 'En cours...' : 'Ajouter'}
+                        Ajouter
                     </Button>
                 </form>
             </Paper>
