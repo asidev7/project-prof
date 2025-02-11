@@ -13,6 +13,7 @@ const ServicesAddPage = () => {
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [message, setMessage] = useState<string | null>(null);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -26,11 +27,10 @@ const ServicesAddPage = () => {
         e.preventDefault();
         setLoading(true);
         setError(null);
-
-        console.log('Données envoyées:', serviceData); // Log des données avant l'envoi
+        setMessage(null);
 
         try {
-            const response = await fetch(`${API_BASE_URL}/services/create-service/`, {
+            const response = await fetch(`${API_BASE_URL}/services/create/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -38,25 +38,16 @@ const ServicesAddPage = () => {
                 body: JSON.stringify(serviceData),
             });
 
-            // Vérification du statut HTTP
-            if (!response.ok) {
-                const errorDetails = await response.text(); // Utilisation de text() pour récupérer le contenu brut
-                console.error('Erreur de la réponse:', errorDetails);
-                throw new Error('Erreur lors de la création du service');
-            }
+            const data = await response.json();
 
-            // Vérification si la réponse est au format JSON
-            const contentType = response.headers.get('content-type');
-            if (contentType && contentType.includes('application/json')) {
-                const result = await response.json();
-                alert('Service ajouté avec succès!');
+            if (response.ok && data?.success) {
+                setMessage('Service ajouté avec succès!');
                 setServiceData({ name: '', description: '' });
             } else {
-                throw new Error('La réponse n\'est pas au format JSON');
+               setError(data?.message || `Erreur lors de l'ajout du service`);
             }
-        } catch (error: any) {
-            console.error("Erreur lors de l'ajout du service:", error);
-            setError(`Erreur lors de l'ajout du service: ${error.message || 'Inconnue'}`);
+        } catch (err) {
+            setError('Erreur lors de la communication avec le serveur');
         } finally {
             setLoading(false);
         }
@@ -69,6 +60,7 @@ const ServicesAddPage = () => {
                     Ajouter un Service
                 </Typography>
                 {error && <Typography color="error" gutterBottom>{error}</Typography>}
+                {message && <Typography color="primary" gutterBottom>{message}</Typography>}
                 <form onSubmit={handleSubmit}>
                     <TextField
                         label="Nom du Service"

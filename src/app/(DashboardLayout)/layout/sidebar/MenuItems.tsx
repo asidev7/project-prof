@@ -42,12 +42,14 @@ const Menuitems = [
     navlabel: true,
     subheader: "Utilisateurs",
   },
+
   {
     id: uniqueId(),
     title: "Liste des utilisateurs",
     icon: IconUsers,
     href: "/users/list",
   },
+
   {
     id: uniqueId(),
     title: "Ajouter un utilisateur",
@@ -72,7 +74,6 @@ const Menuitems = [
     icon: IconClock,
     href: "/users/activity",
   },
-
   {
     navlabel: true,
     subheader: "Groupes",
@@ -163,6 +164,22 @@ const Menuitems = [
     title: "Liste des documents",
     icon: IconFileAnalytics,
     href: "/documents/list",
+    subtitle: "Documents actifs et archivés",
+  },
+
+   {
+    id: uniqueId(),
+    title: "Média partagé",
+    icon: IconFileAnalytics,
+    href: "/documents/media",
+    subtitle: "Les médias partagés",
+  },
+
+ {
+    id: uniqueId(),
+    title: "Pages",
+    icon: IconFileAnalytics,
+    href: "/documents/pages",
     subtitle: "Documents actifs et archivés",
   },
   {
