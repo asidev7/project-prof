@@ -171,6 +171,22 @@ const Menuitems = [
     subtitle: "Historique des modifications"
   },
 
+   {
+    id: uniqueId(),
+    title: "Ajouter un document",
+    icon: IconClock,
+    href: "/documents/import",
+    subtitle: "Ajout des document"
+  },
+  
+   {
+    id: uniqueId(),
+    title: "Documents archivé",
+    icon: IconClock,
+    href: "/documents/archived",
+    subtitle: "Ajout des document"
+  },
+
   {
     navlabel: true,
     subheader: "Communication",
