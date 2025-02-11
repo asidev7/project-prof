@@ -1,10 +1,9 @@
 import {
-IconLayoutDashboard,
+  IconLayoutDashboard,
   IconUsers,
   IconUserPlus,
   IconLock,
   IconSettings,
-  IconUserCheck,
   IconListDetails,
   IconClock,
   IconActivity,
@@ -21,14 +20,20 @@ IconLayoutDashboard,
   IconMail,
   IconPassword,
   IconHierarchy,
-  
+  IconArchive,
+  IconCategory,
+  IconFolderPlus,
+  IconUpload,
+  IconNews,
+  IconChecklist,
+  IconReportAnalytics,
 } from "@tabler/icons-react";
 import { uniqueId } from "lodash";
 
 const Menuitems = [
-    {
+  {
     id: uniqueId(),
-    title:"Tableau bord",
+    title: "Tableau de bord",
     icon: IconLayoutDashboard,
     href: "/dashboard",
   },
@@ -67,6 +72,7 @@ const Menuitems = [
     icon: IconClock,
     href: "/users/activity",
   },
+
   {
     navlabel: true,
     subheader: "Groupes",
@@ -95,6 +101,7 @@ const Menuitems = [
     icon: IconActivity,
     href: "/groups/activity",
   },
+
   {
     navlabel: true,
     subheader: "Services",
@@ -117,6 +124,7 @@ const Menuitems = [
     icon: IconClock,
     href: "/services/history",
   },
+
   {
     navlabel: true,
     subheader: "Sécurité",
@@ -145,7 +153,8 @@ const Menuitems = [
     icon: IconSettings,
     href: "/security/settings",
   },
-{
+
+  {
     navlabel: true,
     subheader: "Documents",
   },
@@ -154,60 +163,56 @@ const Menuitems = [
     title: "Liste des documents",
     icon: IconFileAnalytics,
     href: "/documents/list",
-    subtitle: "Documents actifs et archivés"
+    subtitle: "Documents actifs et archivés",
   },
   {
     id: uniqueId(),
     title: "Médias",
     icon: IconFolder,
     href: "/media/list",
-    subtitle: "Images, vidéos et fichiers multimédias"
+    subtitle: "Images, vidéos et fichiers multimédias",
   },
   {
     id: uniqueId(),
     title: "Versions",
     icon: IconClock,
     href: "/documents/versions",
-    subtitle: "Historique des modifications"
-  },
-
-   {
-    id: uniqueId(),
-    title: "Audit",
-    icon: IconClock,
-    href: "/documents/audit",
-    subtitle: "Historique des modifications"
-  },
-
-    {
-    id: uniqueId(),
-    title: "Catégorie Document",
-    icon: IconClock,
-    href: "/documents/category",
-    subtitle: "Ajout de catégory de document"
+    subtitle: "Historique des modifications",
   },
   {
     id: uniqueId(),
-    title: "Dossier ",
-    icon: IconClock,
-    href: "/documents/dossier",
-    subtitle: "Ajout dossier"
+    title: "Audit",
+    icon: IconAlertCircle,
+    href: "/documents/audit",
+    subtitle: "Historique des modifications",
   },
-
-   {
+  {
+    id: uniqueId(),
+    title: "Catégorie Document",
+    icon: IconCategory,
+    href: "/documents/category",
+    subtitle: "Ajout de catégorie de document",
+  },
+  {
+    id: uniqueId(),
+    title: "Dossier",
+    icon: IconFolderPlus,
+    href: "/documents/dossier",
+    subtitle: "Ajout dossier",
+  },
+  {
     id: uniqueId(),
     title: "Ajouter un document",
-    icon: IconClock,
+    icon: IconUpload,
     href: "/documents/import",
-    subtitle: "Ajout des document"
+    subtitle: "Ajout des documents",
   },
-  
-   {
+  {
     id: uniqueId(),
-    title: "Documents archivé",
-    icon: IconClock,
+    title: "Documents archivés",
+    icon: IconArchive,
     href: "/documents/archived",
-    subtitle: "Ajout des document"
+    subtitle: "Ajout des documents",
   },
 
   {
@@ -219,21 +224,21 @@ const Menuitems = [
     title: "Messagerie",
     icon: IconMessage,
     href: "/communication/messages",
-    subtitle: "Conversations et discussions"
+    subtitle: "Conversations et discussions",
   },
   {
     id: uniqueId(),
     title: "Publications",
-    icon: IconMail,
+    icon: IconNews,
     href: "/communication/publications",
-    subtitle: "Actualités et annonces"
+    subtitle: "Actualités et annonces",
   },
   {
     id: uniqueId(),
     title: "Sondages",
     icon: IconChartHistogram,
     href: "/communication/polls",
-    subtitle: "Création et résultats"
+    subtitle: "Création et résultats",
   },
 
   {
@@ -245,21 +250,21 @@ const Menuitems = [
     title: "Journal d'activité",
     icon: IconAlertCircle,
     href: "/security/access-logs",
-    subtitle: "Suivi des connexions"
+    subtitle: "Suivi des connexions",
   },
   {
     id: uniqueId(),
     title: "Contrôle IP",
     icon: IconShield,
     href: "/security/ip-control",
-    subtitle: "Liste noire des adresses"
+    subtitle: "Liste noire des adresses",
   },
   {
     id: uniqueId(),
     title: "2FA & Authentification",
     icon: IconPassword,
     href: "/security/authentication",
-    subtitle: "Double authentification"
+    subtitle: "Double authentification",
   },
 
   {
@@ -271,21 +276,21 @@ const Menuitems = [
     title: "Processus métier",
     icon: IconChartHistogram,
     href: "/workflows/list",
-    subtitle: "Gestion des flux de travail"
+    subtitle: "Gestion des flux de travail",
   },
   {
     id: uniqueId(),
     title: "Tâches assignées",
-    icon: IconRobot,
+    icon: IconChecklist,
     href: "/workflows/tasks",
-    subtitle: "Suivi des actions en cours"
+    subtitle: "Suivi des actions en cours",
   },
   {
     id: uniqueId(),
     title: "Statistiques",
-    icon: IconChartHistogram,
+    icon: IconReportAnalytics,
     href: "/workflows/stats",
-    subtitle: "Performances des processus"
+    subtitle: "Performances des processus",
   },
 
   {
@@ -297,21 +302,22 @@ const Menuitems = [
     title: "Rôles & Permissions",
     icon: IconKey,
     href: "/admin/roles",
-    subtitle: "Gestion des accès"
+    subtitle: "Gestion des accès",
   },
   {
     id: uniqueId(),
     title: "Organigramme",
     icon: IconHierarchy,
     href: "/admin/organization",
-    subtitle: "Structure hiérarchique"
+    subtitle: "Structure hiérarchique",
   },
   {
     id: uniqueId(),
     title: "Rapports système",
     icon: IconFileAnalytics,
     href: "/admin/reports",
-    subtitle: "Export des données"
-  }
+    subtitle: "Export des données",
+  },
 ];
+
 export default Menuitems;
