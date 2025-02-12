@@ -95,7 +95,7 @@ const UserList = () => {
 
         <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '20px' }}>
           <thead>
-            <tr style={{ backgroundColor: '#007bff', color: 'white' }}>
+            <tr style={{ backgroundColor: '#026549', color: 'white' }}>
               <th style={{ padding: '12px' }}>Nom et Prénom</th>
               <th style={{ padding: '12px' }}>Email</th>
               <th style={{ padding: '12px' }}>Role</th>
@@ -113,7 +113,7 @@ const UserList = () => {
                 <td style={{ padding: '12px', display: 'flex', justifyContent: 'space-around' }}>
                   <FaEdit 
                     onClick={() => alert(`Modifier l'utilisateur: ${user.nom} ${user.prenom}`)} 
-                    style={{ cursor: 'pointer', color: '#007bff' }} 
+                    style={{ cursor: 'pointer', color: '#026549' }} 
                   />
                   <FaTrashAlt 
                     onClick={() => handleDeleteUser(user.id)} 
@@ -136,7 +136,7 @@ const UserList = () => {
               style={{
                 padding: '8px',
                 borderRadius: '5px',
-                border: '1px solid #007bff',
+                border: '1px solid #026549',
               }}
             >
               <option value={5}>5</option>
@@ -150,7 +150,7 @@ const UserList = () => {
               onClick={handlePreviousPage}
               style={{
                 padding: '10px 20px',
-                backgroundColor: '#007bff',
+                backgroundColor: '#026549',
                 color: 'white',
                 border: 'none',
                 cursor: 'pointer',
@@ -167,7 +167,7 @@ const UserList = () => {
               onClick={handleNextPage}
               style={{
                 padding: '10px 20px',
-                backgroundColor: '#007bff',
+                backgroundColor: '#026549',
                 color: 'white',
                 border: 'none',
                 cursor: 'pointer',

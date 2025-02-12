@@ -133,7 +133,7 @@ const PermissionList = () => {
           <h1 style={{ color: '#0056b3', fontWeight: 'bold' }}>Permissions List</h1>
           <button
             style={{
-              backgroundColor: '#007bff',
+              backgroundColor: '#026549',
               color: 'white',
               border: 'none',
               padding: '10px 20px',
@@ -152,7 +152,7 @@ const PermissionList = () => {
         <div style={{ marginTop: '20px' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '20px' }}>
             <thead>
-              <tr style={{ backgroundColor: '#007bff', color: 'white' }}>
+              <tr style={{ backgroundColor: '#026549', color: 'white' }}>
                 <th style={{ padding: '12px' }}>Name</th>
                 <th style={{ padding: '12px' }}>Description</th>
                 <th style={{ padding: '12px' }}>Level</th>
@@ -168,7 +168,7 @@ const PermissionList = () => {
                   <td style={{ padding: '12px', display: 'flex', justifyContent: 'space-around' }}>
                     <FaEdit
                       onClick={() => handleEditPermission(permission)}
-                      style={{ cursor: 'pointer', color: '#007bff' }}
+                      style={{ cursor: 'pointer', color: '#026549' }}
                     />
                     <FaTrashAlt
                       onClick={() => handleDeletePermission(permission.id)}
@@ -185,7 +185,7 @@ const PermissionList = () => {
               onClick={handlePreviousPage}
               style={{
                 padding: '10px 20px',
-                backgroundColor: '#007bff',
+                backgroundColor: '#026549',
                 color: 'white',
                 border: 'none',
                 cursor: 'pointer',
@@ -202,7 +202,7 @@ const PermissionList = () => {
               onClick={handleNextPage}
               style={{
                 padding: '10px 20px',
-                backgroundColor: '#007bff',
+                backgroundColor: '#026549',
                 color: 'white',
                 border: 'none',
                 cursor: 'pointer',

@@ -171,7 +171,7 @@ const RoleList = () => {
           <button
             onClick={() => setIsModalOpen(true)}
             style={{
-              backgroundColor: '#007bff',
+              backgroundColor: '#026549',
               color: 'white',
               border: 'none',
               padding: '10px 20px',
@@ -185,7 +185,7 @@ const RoleList = () => {
 
         <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '20px' }}>
           <thead>
-            <tr style={{ backgroundColor: '#007bff', color: 'white' }}>
+            <tr style={{ backgroundColor: '#026549', color: 'white' }}>
               <th style={{ padding: '12px' }}>Nom</th>
               <th style={{ padding: '12px' }}>Description</th>
               <th style={{ padding: '12px' }}>Permissions</th>
@@ -209,7 +209,7 @@ const RoleList = () => {
                 <td style={{ padding: '12px', display: 'flex', justifyContent: 'space-around' }}>
                   <FaEdit
                     onClick={() => handleEditRole(role)}
-                    style={{ cursor: 'pointer', color: '#007bff' }}
+                    style={{ cursor: 'pointer', color: '#026549' }}
                   />
                   <FaTrashAlt
                     onClick={() => handleDeleteRole(role.id)}
@@ -232,7 +232,7 @@ const RoleList = () => {
               style={{
                 padding: '8px',
                 borderRadius: '5px',
-                border: '1px solid #007bff',
+                border: '1px solid #026549',
               }}
             >
               <option value={5}>5</option>
@@ -290,7 +290,7 @@ const RoleList = () => {
                   padding: '8px',
                   marginTop: '5px',
                   borderRadius: '5px',
-                  border: '1px solid #007bff',
+                  border: '1px solid #026549',
                 }}
               />
             </div>
@@ -305,7 +305,7 @@ const RoleList = () => {
                   padding: '8px',
                   marginTop: '5px',
                   borderRadius: '5px',
-                  border: '1px solid #007bff',
+                  border: '1px solid #026549',
                 }}
               />
             </div>
@@ -325,7 +325,7 @@ const RoleList = () => {
                   padding: '8px',
                   marginTop: '5px',
                   borderRadius: '5px',
-                  border: '1px solid #007bff',
+                  border: '1px solid #026549',
                 }}
               >
                 {permissions.map((permission) => (
@@ -342,7 +342,7 @@ const RoleList = () => {
               </button>
               <button
                 onClick={handleAddRole}
-                style={{ backgroundColor: '#007bff', color: 'white', padding: '8px 16px' }}
+                style={{ backgroundColor: '#026549', color: 'white', padding: '8px 16px' }}
               >
                 Ajouter
               </button>
