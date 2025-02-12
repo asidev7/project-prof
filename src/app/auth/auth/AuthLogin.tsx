@@ -1,3 +1,5 @@
+'use client'; // Declare this for client-side rendering in Next.js
+
 import React from "react";
 import {
   Box,
@@ -12,10 +14,11 @@ import Link from "next/link";
 
 import CustomTextField from "@/app/(DashboardLayout)/components/forms/theme-elements/CustomTextField";
 
+// TypeScript Interface to define expected props
 interface loginType {
   title?: string;
-  subtitle?: JSX.Element | JSX.Element[];
-  subtext?: JSX.Element | JSX.Element[];
+  subtitle?: React.ReactNode | React.ReactNode[]; // Correct JSX typing
+  subtext?: React.ReactNode | React.ReactNode[];  // Correct JSX typing
 }
 
 const AuthLogin = ({ title, subtitle, subtext }: loginType) => (

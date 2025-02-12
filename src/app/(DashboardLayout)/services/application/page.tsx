@@ -1,9 +1,20 @@
 'use client';
 
+<<<<<<< HEAD
 import React, { useState } from 'react';
 import { TextField, Button, Container, Typography, Paper } from '@mui/material';
+=======
+import React, { useState, useEffect } from 'react';
+import { TextField, Button, Container, Typography, Paper, MenuItem, Select, FormControl, InputLabel, SelectChangeEvent } from '@mui/material';
+>>>>>>> 74e50adf87ca2e0e168bf9405ddfee7f008f3442
 import { createApplication } from "@/services/services";
 import { loginUser, logoutUser } from "@/services/users"; // Importation des fonctions d'authentification
+
+// Définir le type des utilisateurs
+interface User {
+  id: string;
+  name: string;
+}
 
 const ApplicationsAddPage = () => {
     const [username, setUsername] = useState('');
@@ -14,7 +25,27 @@ const ApplicationsAddPage = () => {
     });
     const [error, setError] = useState('');
 
+<<<<<<< HEAD
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+=======
+    // Définir l'état 'users' comme un tableau d'objets de type User
+    const [users, setUsers] = useState<User[]>([]);
+
+    useEffect(() => {
+        const fetchUsers = async () => {
+            try {
+                const usersList = await getUsersList(); // Utilisation de la bonne fonction
+                setUsers(usersList); // Mise à jour de l'état avec la liste des utilisateurs
+            } catch (error) {
+                console.error("Erreur lors du chargement des utilisateurs", error);
+            }
+        };
+
+        fetchUsers();
+    }, []);
+
+    const handleChange = (e: React.ChangeEvent<{ name?: string; value: unknown }>) => {
+>>>>>>> 74e50adf87ca2e0e168bf9405ddfee7f008f3442
         const { name, value } = e.target;
         setApplicationData((prevData) => ({
             ...prevData,
@@ -22,6 +53,7 @@ const ApplicationsAddPage = () => {
         }));
     };
 
+<<<<<<< HEAD
     const handleLogin = async () => {
         try {
             const credentials = { username, password };
@@ -30,6 +62,15 @@ const ApplicationsAddPage = () => {
         } catch (err) {
             setError('Erreur lors de la connexion');
         }
+=======
+    // Correction du type de l'événement pour Select
+    const handleSelectChange = (event: SelectChangeEvent<string>) => {
+        const { value } = event.target;
+        setApplicationData((prevData) => ({
+            ...prevData,
+            userId: value,
+        }));
+>>>>>>> 74e50adf87ca2e0e168bf9405ddfee7f008f3442
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -118,6 +159,22 @@ const ApplicationsAddPage = () => {
                         onChange={handleChange}
                     />
 
+<<<<<<< HEAD
+=======
+                    <FormControl fullWidth margin="normal" required>
+                        <InputLabel>Utilisateur</InputLabel>
+                        <Select
+                            name="userId"
+                            value={applicationData.userId}
+                            onChange={handleSelectChange} // Utilisation de handleSelectChange
+                        >
+                            {users.map((user) => (
+                                <MenuItem key={user.id} value={user.id}>{user.name}</MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+
+>>>>>>> 74e50adf87ca2e0e168bf9405ddfee7f008f3442
                     <Button
                         variant="contained"
                         color="primary"

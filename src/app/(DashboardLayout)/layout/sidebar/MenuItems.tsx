@@ -69,12 +69,6 @@ const Menuitems = [
     href: "/users/permissions",
   },
   {
-    id: uniqueId(),
-    title: "Historique des activités",
-    icon: IconClock,
-    href: "/users/activity",
-  },
-  {
     navlabel: true,
     subheader: "Groupes",
   },
@@ -120,13 +114,7 @@ const Menuitems = [
     icon: IconUserPlus,
     href: "/services/add",
   },
-  {
-    id: uniqueId(),
-    title: "Historique des services",
-    icon: IconClock,
-    href: "/services/history",
-  },
-
+  
    {
     id: uniqueId(),
     title: "Ajouter une application",

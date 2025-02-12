@@ -62,7 +62,7 @@ const DocumentList = () => {
                 <TableCell>Nom du document</TableCell>
                 <TableCell>Type de fichier</TableCell>
                 <TableCell>Uploadé par</TableCell>
-                <TableCell>Date d'importation</TableCell>
+                <TableCell>Date importation</TableCell>
                 <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>

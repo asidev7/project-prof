@@ -74,7 +74,7 @@ const Addecurity = () => {
               onChange={handleChange}
               placeholder="Nom de la procédure"
               required
-              style={{ padding: '10px', borderRadius: '5px', border: '1px solid #007bff' }}
+              style={{ padding: '10px', borderRadius: '5px', border: '1px solid #026549' }}
             />
             <input
               type="text"
@@ -83,7 +83,7 @@ const Addecurity = () => {
               onChange={handleChange}
               placeholder="Type de la procédure"
               required
-              style={{ padding: '10px', borderRadius: '5px', border: '1px solid #007bff' }}
+              style={{ padding: '10px', borderRadius: '5px', border: '1px solid #026549' }}
             />
           </div>
 
@@ -92,7 +92,7 @@ const Addecurity = () => {
             disabled={loading}
             style={{
               padding: '10px 20px',
-              backgroundColor: '#007bff',
+              backgroundColor: '#026549',
               color: 'white',
               border: 'none',
               cursor: 'pointer',

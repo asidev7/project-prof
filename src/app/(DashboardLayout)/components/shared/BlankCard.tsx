@@ -1,8 +1,9 @@
 import { Card } from "@mui/material";
+import React from "react";
 
 type Props = {
   className?: string;
-  children: JSX.Element | JSX.Element[];
+  children: React.ReactNode; // ✅ Utilisation de React.ReactNode
 };
 
 const BlankCard = ({ children, className }: Props) => {
@@ -11,7 +12,7 @@ const BlankCard = ({ children, className }: Props) => {
       sx={{ p: 0, position: "relative" }}
       className={className}
       elevation={9}
-      variant={undefined}
+      variant="elevation" // ✅ Correction: éviter `undefined`
     >
       {children}
     </Card>

@@ -4,19 +4,23 @@ import React, { useState } from 'react';
 import { TextField, Button, MenuItem, InputLabel, Select, FormControl, Box } from '@mui/material';
 
 const DocumentsVersionsPage = () => {
-    const [document, setDocument] = useState('');
-    const [file, setFile] = useState(null);
-    const [versionNumber, setVersionNumber] = useState('');
-    const [uploadedBy, setUploadedBy] = useState('');
+    const [document, setDocument] = useState<string>('');
+    const [file, setFile] = useState<File | null>(null);
+    const [versionNumber, setVersionNumber] = useState<string>('');
+    const [uploadedBy, setUploadedBy] = useState<string>('');
 
-    // Liste des documents disponibles (remplace par Firebase plus tard)
+    // Liste des documents disponibles (remplacer par Firebase plus tard)
     const documentsList = ["Document A", "Document B", "Document C"];
 
-    const handleFileChange = (event) => {
-        setFile(event.target.files[0]);
+    // Typage explicite de l'événement pour la gestion de fichiers
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.files) {
+            setFile(event.target.files[0]);
+        }
     };
 
-    const handleSubmit = (event) => {
+    // Typage explicite de l'événement pour la soumission du formulaire
+    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         // Logique pour envoyer les données à Firebase
         console.log({ document, file, versionNumber, uploadedBy });
@@ -38,6 +42,7 @@ const DocumentsVersionsPage = () => {
                         ))}
                     </Select>
                 </FormControl>
+
                 {/* Version Number */}
                 <TextField
                     fullWidth
@@ -59,6 +64,14 @@ const DocumentsVersionsPage = () => {
                         <MenuItem value="User 2">User 2</MenuItem>
                     </Select>
                 </FormControl>
+
+                {/* File Input */}
+                <input
+                    type="file"
+                    onChange={handleFileChange}
+                    accept=".pdf,.docx,.txt"
+                    style={{ marginTop: 16 }}
+                />
 
                 {/* Submit Button */}
                 <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>

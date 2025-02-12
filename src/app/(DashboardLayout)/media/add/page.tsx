@@ -1,5 +1,4 @@
 'use client';
-
 import React, { useState } from "react";
 import { TextField, Button, MenuItem, Select, InputLabel, FormControl, IconButton, Box } from "@mui/material";
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
@@ -9,27 +8,51 @@ import ImageIcon from '@mui/icons-material/Image';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import AudioFileIcon from '@mui/icons-material/AudioFile';
 import { uploadMedia } from "@/services/document";  // Importer la fonction
+import { SelectChangeEvent } from '@mui/material/Select'; // Import du type SelectChangeEvent
 
+// Types de fichiers supportés
 const fileTypes = ['PDF', 'WORD', 'EXCEL', 'POWERPOINT', 'TEXT', 'JPG', 'PNG', 'MP4 video', 'MP3 Audio'];
 
-const MediaForm = () => {
-  const [mediaData, setMediaData] = useState({
+// Déclaration des types pour le state
+interface MediaData {
+  title: string;
+  mediaType: string;
+  file: File | null;
+  uploadedBy: string;
+}
+
+const MediaForm: React.FC = () => {
+  // State avec typage explicite pour MediaData
+  const [mediaData, setMediaData] = useState<MediaData>({
     title: "",
     mediaType: "",
     file: null,
     uploadedBy: "",
   });
 
-  const handleChange = (e) => {
+  // Gestion des changements dans les champs du formulaire
+  const handleChangeText = (e: React.ChangeEvent<{ name?: string; value: unknown }>) => {
     const { name, value } = e.target;
-    setMediaData((prev) => ({ ...prev, [name]: value }));
+    if (name) {
+      setMediaData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
-  const handleFileChange = (e) => {
-    setMediaData((prev) => ({ ...prev, file: e.target.files[0] }));
+  const handleChangeSelect = (e: SelectChangeEvent<string>) => {
+    const { name, value } = e.target;
+    if (name) {
+      setMediaData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
-  const handleSubmit = async (e) => {
+  // Gestion de la sélection d'un fichier
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files ? e.target.files[0] : null;
+    setMediaData((prev) => ({ ...prev, file }));
+  };
+
+  // Gestion de la soumission du formulaire
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Submitted Data:", mediaData);
 
@@ -43,7 +66,8 @@ const MediaForm = () => {
     }
   };
 
-  const renderFileIcon = (fileType) => {
+  // Fonction pour afficher l'icône correspondant au type de fichier
+  const renderFileIcon = (fileType: string) => {
     switch (fileType) {
       case 'PDF':
         return <PictureAsPdfIcon />;
@@ -73,14 +97,14 @@ const MediaForm = () => {
         label="Title"
         name="title"
         value={mediaData.title}
-        onChange={handleChange}
+        onChange={handleChangeText}  // Utiliser le gestionnaire pour le TextField
         fullWidth
         required
       />
       
       <FormControl fullWidth>
         <InputLabel>Media Type</InputLabel>
-        <Select name="mediaType" value={mediaData.mediaType} onChange={handleChange} required>
+        <Select name="mediaType" value={mediaData.mediaType} onChange={handleChangeSelect} required>
           <MenuItem value="image">Image</MenuItem>
           <MenuItem value="video">Vidéo</MenuItem>
           <MenuItem value="audio">Audio</MenuItem>
@@ -105,13 +129,13 @@ const MediaForm = () => {
             ':hover': { borderColor: '#1565c0' }
           }}
         >
-          {mediaData.file ? renderFileIcon(mediaData.file.name.split('.').pop().toUpperCase()) : <InsertDriveFileIcon />}
+          {mediaData.file ? renderFileIcon(mediaData.file.name.split('.').pop()?.toUpperCase() || '') : <InsertDriveFileIcon />}
         </IconButton>
       </label>
       
       <FormControl fullWidth>
         <InputLabel>Uploaded By</InputLabel>
-        <Select name="uploadedBy" value={mediaData.uploadedBy} onChange={handleChange} required>
+        <Select name="uploadedBy" value={mediaData.uploadedBy} onChange={handleChangeSelect} required>
           <MenuItem value="admin">Admin</MenuItem>
           <MenuItem value="user">User</MenuItem>
         </Select>
@@ -122,7 +146,7 @@ const MediaForm = () => {
   );
 };
 
-const MediaListPage = () => {
+const MediaListPage: React.FC = () => {
   return (
     <div>
       <h1 style={{ textAlign: 'center' }}>Ajouter un Média</h1>
