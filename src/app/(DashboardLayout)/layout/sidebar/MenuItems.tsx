@@ -114,13 +114,6 @@ const Menuitems = [
     href: "/services/list",
   },
 
-    {
-    id: uniqueId(),
-    title: "Ajout de admin document request",
-    icon: IconListDetails,
-    href: "/services/documment-admin",
-  },
-
   {
     id: uniqueId(),
     title: "Ajouter un service",
