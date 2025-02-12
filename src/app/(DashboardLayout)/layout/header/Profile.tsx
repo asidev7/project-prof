@@ -33,16 +33,6 @@ const Profile = ({ adminName = "Admin", userRole = "Administrateur" }) => {
   return (
     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
       {/* Notification Icon */}
-      <IconButton
-        sx={{
-          backgroundColor: "#4CAF50",
-          "&:hover": { backgroundColor: "#45a049" },
-        }}
-      >
-        <Badge badgeContent={3} color="error">
-          <IconBellRinging color="white" />
-        </Badge>
-      </IconButton>
 
       {/* Profile Section */}
       <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>

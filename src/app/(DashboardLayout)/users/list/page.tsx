@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import PageContainer from '@/app/(DashboardLayout)/components/container/PageContainer';
 import { FaEdit, FaTrashAlt } from 'react-icons/fa';
-
+import './UserList.css'
 interface User {
   id: number;
   nom: string;
@@ -88,36 +88,34 @@ const UserList = () => {
 
   return (
     <PageContainer>
-      <div style={{ padding: '20px', backgroundColor: '#f0f8ff', borderRadius: '8px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h1 style={{ color: '#0056b3', fontWeight: 'bold' }}>Liste des Utilisateurs</h1>
-        </div>
+      <div className="page-container">
+        <h1 className="page-title">Liste des Utilisateurs</h1>
 
-        <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '20px' }}>
+        <table className="user-table">
           <thead>
-            <tr style={{ backgroundColor: '#026549', color: 'white' }}>
-              <th style={{ padding: '12px' }}>Nom et Prénom</th>
-              <th style={{ padding: '12px' }}>Email</th>
-              <th style={{ padding: '12px' }}>Role</th>
-              <th style={{ padding: '12px' }}>Statut</th>
-              <th style={{ padding: '12px' }}>Actions</th>
+            <tr>
+              <th>Nom et Prénom</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Statut</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {currentUsers.map((user) => (
-              <tr key={user.id} style={{ backgroundColor: '#f8f9fa' }}>
-                <td style={{ padding: '12px' }}>{user.nom} {user.prenom}</td>
-                <td style={{ padding: '12px' }}>{user.email}</td>
-                <td style={{ padding: '12px' }}>{user.role}</td>
-                <td style={{ padding: '12px' }}>{user.statut}</td>
-                <td style={{ padding: '12px', display: 'flex', justifyContent: 'space-around' }}>
-                  <FaEdit 
-                    onClick={() => alert(`Modifier l'utilisateur: ${user.nom} ${user.prenom}`)} 
-                    style={{ cursor: 'pointer', color: '#026549' }} 
+              <tr key={user.id}>
+                <td>{user.nom} {user.prenom}</td>
+                <td>{user.email}</td>
+                <td>{user.role}</td>
+                <td>{user.statut}</td>
+                <td className="actions">
+                  <FaEdit
+                    onClick={() => alert(`Modifier l'utilisateur: ${user.nom} ${user.prenom}`)}
+                    className="edit-icon"
                   />
-                  <FaTrashAlt 
-                    onClick={() => handleDeleteUser(user.id)} 
-                    style={{ cursor: 'pointer', color: '#dc3545' }} 
+                  <FaTrashAlt
+                    onClick={() => handleDeleteUser(user.id)}
+                    className="delete-icon"
                   />
                 </td>
               </tr>
@@ -125,19 +123,14 @@ const UserList = () => {
           </tbody>
         </table>
 
-        {/* Pagination */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '20px' }}>
-          <div>
-            <label htmlFor="usersPerPage" style={{ marginRight: '10px' }}>Utilisateurs par page:</label>
+        {/* Pagination Controls */}
+        <div className="pagination-controls">
+          <div className="pagination-select">
+            <label htmlFor="usersPerPage">Utilisateurs par page:</label>
             <select
               id="usersPerPage"
               value={usersPerPage}
               onChange={handleUsersPerPageChange}
-              style={{
-                padding: '8px',
-                borderRadius: '5px',
-                border: '1px solid #026549',
-              }}
             >
               <option value={5}>5</option>
               <option value={10}>10</option>
@@ -145,38 +138,12 @@ const UserList = () => {
             </select>
           </div>
 
-          <div>
-            <button
-              onClick={handlePreviousPage}
-              style={{
-                padding: '10px 20px',
-                backgroundColor: '#026549',
-                color: 'white',
-                border: 'none',
-                cursor: 'pointer',
-                borderRadius: '5px',
-                marginRight: '10px',
-              }}
-            >
-              Précédent
-            </button>
-            <span style={{ fontSize: '16px', fontWeight: 'bold' }}>
+          <div className="pagination-buttons">
+            <button onClick={handlePreviousPage} className="pagination-button">Précédent</button>
+            <span className="pagination-info">
               Page {currentPage} sur {Math.ceil(users.length / usersPerPage)}
             </span>
-            <button
-              onClick={handleNextPage}
-              style={{
-                padding: '10px 20px',
-                backgroundColor: '#026549',
-                color: 'white',
-                border: 'none',
-                cursor: 'pointer',
-                borderRadius: '5px',
-                marginLeft: '10px',
-              }}
-            >
-              Suivant
-            </button>
+            <button onClick={handleNextPage} className="pagination-button">Suivant</button>
           </div>
         </div>
       </div>

@@ -74,9 +74,7 @@ const Header = ({toggleMobileSidebar}: ItemType) => {
         {/* Admin Button and Profile */}
         <Stack spacing={1} direction="row" alignItems="center">
           {/* Admin Button */}
-          <Button variant="contained" disableElevation sx={{ backgroundColor: '#388E3C', '&:hover': { backgroundColor: '#2E7D32' } }}>
-            Administrateur
-          </Button>
+         
           {/* Profile */}
           <Profile />
         </Stack>
