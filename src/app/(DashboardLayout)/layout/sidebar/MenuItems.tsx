@@ -134,6 +134,13 @@ const Menuitems = [
     href: "/services/history",
   },
 
+   {
+    id: uniqueId(),
+    title: "Ajouter une application",
+    icon: IconListDetails,
+    href: "/services/application",
+  },
+
   {
     navlabel: true,
     subheader: "Sécurité",
@@ -167,6 +174,7 @@ const Menuitems = [
     navlabel: true,
     subheader: "Documents",
   },
+
   {
     id: uniqueId(),
     title: "Liste des documents",
@@ -175,13 +183,23 @@ const Menuitems = [
     subtitle: "Documents actifs et archivés",
   },
 
-   {
+
+    {
     id: uniqueId(),
-    title: "Média partagé",
+    title: "List des média",
     icon: IconFileAnalytics,
-    href: "/documents/media",
+    href: "/media/list",
     subtitle: "Les médias partagés",
   },
+
+    {
+    id: uniqueId(),
+    title: "Ajouter un media",
+    icon: IconFileAnalytics,
+    href: "/media/add",
+    subtitle: "Les médias partagés",
+  },
+
 
  {
     id: uniqueId(),
@@ -190,13 +208,16 @@ const Menuitems = [
     href: "/documents/pages",
     subtitle: "Documents actifs et archivés",
   },
-  {
-    id: uniqueId(),
-    title: "Médias",
-    icon: IconFolder,
-    href: "/media/list",
-    subtitle: "Images, vidéos et fichiers multimédias",
-  },
+
+// {
+//   id: uniqueId(),
+//   title: "Médias",
+//   icon: IconFolder,
+//   href: "/media/list",
+//   subtitle: "Images, vidéos et fichiers multimédias",
+// }
+
+
   {
     id: uniqueId(),
     title: "Versions",

@@ -6,13 +6,86 @@ const API_BASE_URL = 'https://www.backend.lnb-intranet.globalitnet.org';
 // Fonction générique pour effectuer les requêtes GET
 const getRequest = async (url: string) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}${url}`);
+    // Récupération dynamique du token CSRF et d'authentification
+    const authToken = localStorage.getItem('authToken');  
+    const csrfToken = localStorage.getItem('csrfToken'); // À récupérer dynamiquement si nécessaire
+
+    // Configuration des headers
+    const headers: Record<string, string> = {
+      'Accept': 'application/json', 
+      'Content-Type': 'application/json',
+    };
+
+    if (csrfToken) headers['X-CSRFTOKEN'] = csrfToken; 
+    if (authToken) headers['Authorization'] = `Bearer ${authToken}`; 
+
+    // Requête GET avec Axios
+    const response = await axios.get(`${API_BASE_URL}${url}`, { headers });
     return response.data;
-  } catch (error) {
-    console.error('Erreur GET:', error);
+  } catch (error: any) {
+    console.error('❌ Erreur GET:', error?.response?.status, error?.response?.data || error.message);
     throw error;
   }
 };
+
+
+// Fonction pour récupérer le CSRF token depuis les cookies (ou autre méthode si nécessaire)
+const getCsrfToken = (): string => {
+  const cookieValue = document.cookie
+    .split('; ')
+    .find(row => row.startsWith('csrftoken='))
+    ?.split('=')[1];
+  return cookieValue || ''; // Retourne une valeur par défaut vide si non trouvé
+};
+
+//MEDIA
+/**
+ * Fonction pour uploader un média.
+ * @param file Le fichier à uploader.
+ * @returns Les données du média créé.
+ */
+export const uploadMedia = async (file: File) => {
+  try {
+    const authToken = localStorage.getItem('authToken');  
+    const csrfToken = localStorage.getItem('csrfToken'); 
+
+    const formData = new FormData();
+    formData.append('file', file); // Le champ 'file' doit correspondre à celui attendu par l'API
+
+    const headers: Record<string, string> = {
+      'Accept': 'application/json',
+    };
+
+    if (csrfToken) headers['X-CSRFTOKEN'] = csrfToken; 
+    if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
+
+    const response = await axios.post(`${API_BASE_URL}/documents/media/upload/`, formData, {
+      headers,
+    });
+
+    return response.data;
+  } catch (error: any) {
+    console.error('Erreur lors de l\'upload du média:', error?.response?.status, error?.response?.data || error.message);
+    throw error;
+  }
+};
+
+// Fonction pour récupérer la liste des médias
+export const getMediaList = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/documents/media/`);
+    return response.data.media; // Assurez-vous que la structure des données est correcte
+  } catch (error) {
+    console.error("Erreur lors de la récupération des médias:", error);
+    throw error; // Permet à la page d'afficher l'erreur
+  }
+};
+
+
+
+
+
+
 
 // Fonction générique pour effectuer les requêtes POST
 const postRequest = async (url: string, data: any) => {
@@ -50,8 +123,12 @@ const deleteRequest = async (url: string) => {
 // Documents API Functions
 
 // Get list of documents
-export const getDocumentsList = () => {
-  return getRequest('/documents/documents/');
+/**
+ * Fonction pour récupérer la liste des documents.
+ * @returns Liste des documents.
+ */
+export const getDocumentsList = async () => {
+  return await getRequest('/documents/documents/');
 };
 
 // Create a document

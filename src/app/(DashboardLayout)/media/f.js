@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { TextField, Button, Typography, Box, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
 import PageContainer from '@/app/(DashboardLayout)/components/container/PageContainer';
 import DashboardCard from '@/app/(DashboardLayout)/components/shared/DashboardCard';
+import { uploadMedia } from "@/services/document";
 
 const mediaTypes = ['Image', 'Vidéo', 'Audio'];
 const contentTypes = ['Texte', 'Image', 'Vidéo', 'Audio'];
@@ -15,13 +16,21 @@ const MediaPageForm = () => {
   const [content, setContent] = useState('');
   const [objectId, setObjectId] = useState('');
   const [permission, setPermission] = useState('');
+  const [file, setFile] = useState<File | null>(null);
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    console.log('Media:', media);
-    console.log('Contenu:', content);
-    console.log('Object ID:', objectId);
-    console.log('Permission:', permission);
+    if (!file) {
+      console.error('Aucun fichier sélectionné');
+      return;
+    }
+
+    try {
+      const response = await uploadMedia(file);
+      console.log('Média ajouté avec succès:', response);
+    } catch (error) {
+      console.error('Erreur lors de upload du média:', error);
+    }
   };
 
   return (
@@ -67,6 +76,12 @@ const MediaPageForm = () => {
               {permissions.map((perm) => <MenuItem key={perm} value={perm}>{perm}</MenuItem>)}
             </Select>
           </FormControl>
+
+          <input
+            type="file"
+            onChange={(e) => setFile(e.target.files ? e.target.files[0] : null)}
+            required
+          />
 
           <Button type="submit" variant="contained" color="primary" sx={{ alignSelf: 'center', width: '50%', marginTop: 3 }}>
             Ajouter

@@ -215,10 +215,28 @@ export const getApplicationsByUserId = (userId: string) => {
   return getRequest(`/services/applications/${userId}/`);
 };
 
-// Create and Manage Services
-export const createApplication = (userId: string, data: any) => {
-  return postRequest(`/services/create-application/${userId}/`, data);
+// Fonction pour créer une nouvelle application
+export const createApplication = async (userId: string, data: { name: string; description: string }) => {
+  try {
+    const token = localStorage.getItem('authToken'); // Récupère le token d'authentification
+    const csrfToken = getCsrfToken(); // Récupère dynamiquement le CSRF token
+
+    const response = await axios.post(`${API_BASE_URL}/services/create-application/${userId}/`, data, {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-CSRFTOKEN': csrfToken, // Ajoute le CSRF token
+        'Authorization': `Bearer ${token}`, // Ajoute le token d'authentification
+      },
+    });
+
+    return response.data; // Retourne la réponse de l'API
+  } catch (error: any) {
+    console.error("Erreur lors de la création de l'application:", error.response?.data || error.message);
+    throw error; // Relance l'erreur pour gestion
+  }
 };
+
 
 export const createServiceRequest = (data: any) => {
   return postRequest('/services/create-service-request/', data);
