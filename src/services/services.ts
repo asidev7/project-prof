@@ -3,6 +3,33 @@ import axios from 'axios';
 // URL de base de l'API
 const API_BASE_URL = 'https://www.backend.lnb-intranet.globalitnet.org';
 
+
+export const createApplication = async (userId: string, data: { name: string; description: string }) => {
+    try {
+        const token = localStorage.getItem('authToken'); // Récupère le token d'authentification
+        const csrfToken = getCsrfToken(); // Récupère dynamiquement le CSRF token
+
+        const url = `${API_BASE_URL}/services/create-application/${userId}/`; // Ajoutez userId à l'URL
+        console.log(`Envoi à l'URL: ${url}`);
+        console.log("Données envoyées :", data);
+
+        const response = await axios.post(url, data, {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'X-CSRFTOKEN': csrfToken, // Ajoute le CSRF token
+                'Authorization': `Bearer ${token}`, // Ajoute le token d'authentification
+            },
+        });
+
+        return response.data; // Retourne la réponse de l'API
+    } catch (error: any) {
+        console.error("Erreur lors de la création de l'application:", error.response?.data || error.message);
+        throw error; // Relance l'erreur pour gestion
+    }
+};
+
+
 export const getRequestHistory = async (requestId: string) => {
   try {
     console.log('Request ID:', requestId); // Vérification de la valeur de requestId
@@ -10,9 +37,6 @@ export const getRequestHistory = async (requestId: string) => {
     if (!requestId) {
       throw new Error('Request ID is required');
     }
-
-    const csrfToken = getCsrfToken(); // Récupère dynamiquement le CSRF token
-
     const response = await axios.get(`${API_BASE_URL}/services/request-history/${requestId}/`, {
       headers: {
         'Accept': 'application/json',
@@ -88,11 +112,6 @@ const deleteRequest = async (url: string) => {
   }
 };
 
-
-
-
-
-
 // Fonction pour créer un nouveau service
 export const createService = async (data: {
   name: string;
@@ -120,9 +139,6 @@ export const createService = async (data: {
     throw error; // Relance l'erreur pour une gestion ultérieure
   }
 };
-
-
-
 
 // Fonction pour récupérer la liste des services
 export const getServices = async () => {
@@ -215,27 +231,10 @@ export const getApplicationsByUserId = (userId: string) => {
   return getRequest(`/services/applications/${userId}/`);
 };
 
-// Fonction pour créer une nouvelle application
-export const createApplication = async (userId: string, data: { name: string; description: string }) => {
-  try {
-    const token = localStorage.getItem('authToken'); // Récupère le token d'authentification
-    const csrfToken = getCsrfToken(); // Récupère dynamiquement le CSRF token
 
-    const response = await axios.post(`${API_BASE_URL}/services/create-application/${userId}/`, data, {
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'X-CSRFTOKEN': csrfToken, // Ajoute le CSRF token
-        'Authorization': `Bearer ${token}`, // Ajoute le token d'authentification
-      },
-    });
 
-    return response.data; // Retourne la réponse de l'API
-  } catch (error: any) {
-    console.error("Erreur lors de la création de l'application:", error.response?.data || error.message);
-    throw error; // Relance l'erreur pour gestion
-  }
-};
+
+
 
 
 export const createServiceRequest = (data: any) => {
