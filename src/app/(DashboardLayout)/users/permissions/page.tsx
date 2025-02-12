@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from 'react';
 import { FaEdit, FaTrashAlt, FaPlus } from 'react-icons/fa';
 import PageContainer from '@/app/(DashboardLayout)/components/container/PageContainer';
-import ReactPaginate from 'react-paginate';
 
 interface Permission {
   id: string;
@@ -12,17 +11,24 @@ interface Permission {
 }
 
 const PermissionList = () => {
-  const [permissions, setPermissions] = useState<Permission[]>([]); 
+  const [permissions, setPermissions] = useState<Permission[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(0);
-  const [permissionsPerPage] = useState(5); // Nombre de permissions par page
+  const [permissionsPerPage, setPermissionsPerPage] = useState(5);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newPermission, setNewPermission] = useState<Permission>({
+    id: '',
+    name: '',
+    description: '',
+    level: '',
+  });
 
   const fetchPermissions = async () => {
     try {
       const response = await fetch('https://www.backend.lnb-intranet.globalitnet.org/roles/list-permissions/');
       const data = await response.json();
-      
+
       if (data.permissions && Array.isArray(data.permissions)) {
         setPermissions(data.permissions);
       } else {
@@ -39,14 +45,6 @@ const PermissionList = () => {
   useEffect(() => {
     fetchPermissions();
   }, []);
-
-  if (loading) {
-    return <div>Loading permissions...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
 
   const handleEditPermission = (permission: Permission) => {
     alert(`Edit permission: ${permission.name}`);
@@ -70,6 +68,34 @@ const PermissionList = () => {
     }
   };
 
+  const handleAddPermission = async () => {
+    // Validation simple des champs
+    if (!newPermission.name || !newPermission.description || !newPermission.level) {
+      alert('Please fill in all fields');
+      return;
+    }
+
+    try {
+      const response = await fetch('https://www.backend.lnb-intranet.globalitnet.org/roles/create-permission/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newPermission),
+      });
+      const data = await response.json();
+      if (data.success) {
+        alert('Permission added successfully!');
+        setIsModalOpen(false);
+        fetchPermissions(); // Rafraîchir la liste des permissions après ajout
+      } else {
+        alert('Failed to add permission');
+      }
+    } catch (err) {
+      setError('Error adding permission');
+    }
+  };
+
   const indexOfLastPermission = (currentPage + 1) * permissionsPerPage;
   const indexOfFirstPermission = indexOfLastPermission - permissionsPerPage;
   const currentPermissions = permissions.slice(indexOfFirstPermission, indexOfLastPermission);
@@ -77,6 +103,28 @@ const PermissionList = () => {
   const handlePageChange = (selectedItem: { selected: number }) => {
     setCurrentPage(selectedItem.selected);
   };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 0) setCurrentPage(currentPage - 1);
+  };
+
+  const handleNextPage = () => {
+    const totalPages = Math.ceil(permissions.length / permissionsPerPage);
+    if (currentPage < totalPages - 1) setCurrentPage(currentPage + 1);
+  };
+
+  const handleRolesPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setPermissionsPerPage(Number(e.target.value));
+    setCurrentPage(0); // Réinitialiser à la première page
+  };
+
+  if (loading) {
+    return <div>Loading permissions...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <PageContainer>
@@ -94,59 +142,171 @@ const PermissionList = () => {
               display: 'flex',
               alignItems: 'center',
             }}
-            onClick={() => alert('Add new permission')}
+            onClick={() => setIsModalOpen(true)}
           >
             <FaPlus style={{ marginRight: '5px' }} />
             Ajouter
           </button>
         </div>
 
-        <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '20px' }}>
-          <thead>
-            <tr style={{ backgroundColor: '#007bff', color: 'white' }}>
-              <th style={{ padding: '12px' }}>Name</th>
-              <th style={{ padding: '12px' }}>Description</th>
-              <th style={{ padding: '12px' }}>Level</th>
-              <th style={{ padding: '12px' }}>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentPermissions.map((permission) => (
-              <tr key={permission.id} style={{ backgroundColor: '#f8f9fa' }}>
-                <td style={{ padding: '12px' }}>{permission.name}</td>
-                <td style={{ padding: '12px' }}>{permission.description}</td>
-                <td style={{ padding: '12px' }}>{permission.level}</td>
-                <td style={{ padding: '12px', display: 'flex', justifyContent: 'space-around' }}>
-                  <FaEdit
-                    onClick={() => handleEditPermission(permission)}
-                    style={{ cursor: 'pointer', color: '#007bff' }}
-                  />
-                  <FaTrashAlt
-                    onClick={() => handleDeletePermission(permission.id)}
-                    style={{ cursor: 'pointer', color: '#dc3545' }}
-                  />
-                </td>
+        <div style={{ marginTop: '20px' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '20px' }}>
+            <thead>
+              <tr style={{ backgroundColor: '#007bff', color: 'white' }}>
+                <th style={{ padding: '12px' }}>Name</th>
+                <th style={{ padding: '12px' }}>Description</th>
+                <th style={{ padding: '12px' }}>Level</th>
+                <th style={{ padding: '12px' }}>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {currentPermissions.map((permission) => (
+                <tr key={permission.id} style={{ backgroundColor: '#f8f9fa' }}>
+                  <td style={{ padding: '12px' }}>{permission.name}</td>
+                  <td style={{ padding: '12px' }}>{permission.description}</td>
+                  <td style={{ padding: '12px' }}>{permission.level}</td>
+                  <td style={{ padding: '12px', display: 'flex', justifyContent: 'space-around' }}>
+                    <FaEdit
+                      onClick={() => handleEditPermission(permission)}
+                      style={{ cursor: 'pointer', color: '#007bff' }}
+                    />
+                    <FaTrashAlt
+                      onClick={() => handleDeletePermission(permission.id)}
+                      style={{ cursor: 'pointer', color: '#dc3545' }}
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
 
-        <ReactPaginate
-          previousLabel={<span>&lt;</span>}
-          nextLabel={<span>&gt;</span>}
-          breakLabel={'...'}
-          pageCount={Math.ceil(permissions.length / permissionsPerPage)} // Calcul dynamique du nombre total de pages
-          marginPagesDisplayed={2}
-          pageRangeDisplayed={5}
-          onPageChange={handlePageChange}
-          containerClassName={'pagination'}
-          activeClassName={'active'}
-          previousClassName={'previous'}
-          nextClassName={'next'}
-          pageClassName={'page'}
-          breakClassName={'break'}
-          renderOnZeroPageCount={null}
-        />
+          <div>
+            <button
+              onClick={handlePreviousPage}
+              style={{
+                padding: '10px 20px',
+                backgroundColor: '#007bff',
+                color: 'white',
+                border: 'none',
+                cursor: 'pointer',
+                borderRadius: '5px',
+                marginRight: '10px',
+              }}
+            >
+              Précédent
+            </button>
+            <span style={{ fontSize: '16px', fontWeight: 'bold' }}>
+              Page {currentPage + 1} de {Math.ceil(permissions.length / permissionsPerPage)}
+            </span>
+            <button
+              onClick={handleNextPage}
+              style={{
+                padding: '10px 20px',
+                backgroundColor: '#007bff',
+                color: 'white',
+                border: 'none',
+                cursor: 'pointer',
+                borderRadius: '5px',
+                marginLeft: '10px',
+              }}
+            >
+              Suivant
+            </button>
+          </div>
+        </div>
+
+        {/* Modal pour l'ajout de permission */}
+        {isModalOpen && (
+          <div
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: 'rgba(0, 0, 0, 0.5)',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <div
+              style={{
+                backgroundColor: 'white',
+                padding: '30px',
+                borderRadius: '8px',
+                width: '400px',
+                boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)',
+              }}
+            >
+              <h3>Ajouter une permission</h3>
+              <div>
+                <label htmlFor="name">Nom</label>
+                <input
+                  type="text"
+                  id="name"
+                  value={newPermission.name}
+                  onChange={(e) => setNewPermission({ ...newPermission, name: e.target.value })}
+                  style={{ width: '100%', padding: '10px', marginBottom: '15px' }}
+                />
+              </div>
+              <div>
+                <label htmlFor="description">Description</label>
+                <input
+                  type="text"
+                  id="description"
+                  value={newPermission.description}
+                  onChange={(e) => setNewPermission({ ...newPermission, description: e.target.value })}
+                  style={{ width: '100%', padding: '10px', marginBottom: '15px' }}
+                />
+              </div>
+              <div>
+                <label htmlFor="level">Level</label>
+                <select
+                  id="level"
+                  value={newPermission.level}
+                  onChange={(e) => setNewPermission({ ...newPermission, level: e.target.value })}
+                  style={{ width: '100%', padding: '10px', marginBottom: '15px' }}
+                >
+                  <option value="">Select Level</option>
+                  <option value="admin">Admin</option>
+                  <option value="read">Read</option>
+                  <option value="write">Write</option>
+                </select>
+              </div>
+
+              <div style={{ textAlign: 'center' }}>
+                <button
+                  onClick={handleAddPermission}
+                  style={{
+                    padding: '10px 20px',
+                    backgroundColor: '#28a745',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '5px',
+                    cursor: 'pointer',
+                    marginRight: '10px',
+                  }}
+                >
+                  Ajouter
+                </button>
+                <button
+                  onClick={() => setIsModalOpen(false)}
+                  style={{
+                    padding: '10px 20px',
+                    backgroundColor: '#dc3545',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '5px',
+                    cursor: 'pointer',
+                  }}
+                >
+                  Fermer
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </PageContainer>
   );

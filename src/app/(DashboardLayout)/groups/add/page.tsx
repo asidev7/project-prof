@@ -1,5 +1,6 @@
 'use client';
 import React, { useState } from 'react';
+import './AddGroup.css'; // Importing CSS file for styling
 
 const AddGroup = () => {
   const [formData, setFormData] = useState({
@@ -47,7 +48,6 @@ const AddGroup = () => {
       if (formData.hasOwnProperty(key)) {
         const value = formData[key as keyof typeof formData];
         if (value !== null) {
-          // Only append non-null values
           formDataToSend.append(key, value as string | Blob);
         }
       }
@@ -88,9 +88,11 @@ const AddGroup = () => {
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <div>
+    <div className="add-group-container">
+      <form onSubmit={handleSubmit} className="form-container">
+        <h2>Ajouter un Groupe</h2>
+
+        <div className="form-group">
           <label>Name:</label>
           <input
             type="text"
@@ -100,7 +102,7 @@ const AddGroup = () => {
             required
           />
         </div>
-        <div>
+        <div className="form-group">
           <label>Email:</label>
           <input
             type="email"
@@ -110,7 +112,7 @@ const AddGroup = () => {
             required
           />
         </div>
-        <div>
+        <div className="form-group">
           <label>Phone:</label>
           <input
             type="text"
@@ -120,7 +122,7 @@ const AddGroup = () => {
             required
           />
         </div>
-        <div>
+        <div className="form-group">
           <label>Role:</label>
           <input
             type="text"
@@ -130,7 +132,7 @@ const AddGroup = () => {
             required
           />
         </div>
-        <div>
+        <div className="form-group">
           <label>Bio:</label>
           <input
             type="text"
@@ -139,7 +141,7 @@ const AddGroup = () => {
             onChange={handleInputChange}
           />
         </div>
-        <div>
+        <div className="form-group">
           <label>Address:</label>
           <input
             type="text"
@@ -148,7 +150,7 @@ const AddGroup = () => {
             onChange={handleInputChange}
           />
         </div>
-        <div>
+        <div className="form-group">
           <label>Group Type:</label>
           <input
             type="text"
@@ -157,7 +159,7 @@ const AddGroup = () => {
             onChange={handleInputChange}
           />
         </div>
-        <div>
+        <div className="form-group">
           <label>Department:</label>
           <input
             type="text"
@@ -166,7 +168,7 @@ const AddGroup = () => {
             onChange={handleInputChange}
           />
         </div>
-        <div>
+        <div className="form-group">
           <label>Function:</label>
           <input
             type="text"
@@ -175,7 +177,7 @@ const AddGroup = () => {
             onChange={handleInputChange}
           />
         </div>
-        <div>
+        <div className="form-group">
           <label>Project:</label>
           <input
             type="text"
@@ -184,7 +186,7 @@ const AddGroup = () => {
             onChange={handleInputChange}
           />
         </div>
-        <div>
+        <div className="form-group">
           <label>Auto Assign:</label>
           <input
             type="checkbox"
@@ -193,7 +195,7 @@ const AddGroup = () => {
             onChange={handleInputChange}
           />
         </div>
-        <div>
+        <div className="form-group">
           <label>Role ID:</label>
           <input
             type="text"
@@ -202,7 +204,7 @@ const AddGroup = () => {
             onChange={handleInputChange}
           />
         </div>
-        <div>
+        <div className="form-group">
           <label>Photo:</label>
           <input
             type="file"
@@ -211,10 +213,10 @@ const AddGroup = () => {
           />
         </div>
 
-        {error && <div style={{ color: 'red' }}>{error}</div>}
-        {message && <div style={{ color: 'green' }}>{message}</div>}
+        {error && <div className="error-message">{error}</div>}
+        {message && <div className="success-message">{message}</div>}
 
-        <button type="submit" disabled={loading}>
+        <button type="submit" className="submit-button" disabled={loading}>
           {loading ? 'Loading...' : 'Submit'}
         </button>
       </form>

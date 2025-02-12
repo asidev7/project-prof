@@ -4,7 +4,7 @@ import PageContainer from '@/app/(DashboardLayout)/components/container/PageCont
 import { FaEdit, FaTrashAlt } from 'react-icons/fa';
 
 interface Permission {
-  id: string;
+  id: number; // L'API renvoie un nombre pour l'id
   name: string;
   description: string;
   level: string;
@@ -18,14 +18,19 @@ interface Role {
 }
 
 const RoleList = () => {
-  const [roles, setRoles] = useState<Role[]>([]); // Explicitly type roles as an array of Role objects
-  const [permissions, setPermissions] = useState<Permission[]>([]); // Explicitly type permissions as an array of Permission objects
+  const [roles, setRoles] = useState<Role[]>([]);
+  const [permissions, setPermissions] = useState<Permission[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null); // Define error type as string or null
+  const [error, setError] = useState<string | null>(null);
   const [selectedPermissions, setSelectedPermissions] = useState<string[]>([]);
+  
+  // État du modal d'ajout
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newRole, setNewRole] = useState({ name: '', description: '', permissions: [] });
 
+  // Pagination
   const [currentPage, setCurrentPage] = useState(1);
-  const [rolesPerPage, setRolesPerPage] = useState(5); // Default value of 5
+  const [rolesPerPage, setRolesPerPage] = useState(5);
 
   const indexOfLastRole = currentPage * rolesPerPage;
   const indexOfFirstRole = indexOfLastRole - rolesPerPage;
@@ -45,39 +50,42 @@ const RoleList = () => {
 
   const handleRolesPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setRolesPerPage(Number(e.target.value));
-    setCurrentPage(1); // Reset to page 1 after changing the number of roles per page
+    setCurrentPage(1);
   };
 
-  // Fetch the roles and permissions when the component mounts
+  // Récupération des rôles
   const fetchRoles = async () => {
     try {
       const response = await fetch('https://www.backend.lnb-intranet.globalitnet.org/roles/list-roles/');
       const data = await response.json();
-      if (data && data.roles) {
+      // On s'attend à recevoir { roles: [...] }
+      if (data && data.roles && Array.isArray(data.roles)) {
         setRoles(data.roles);
       } else {
-        throw new Error('No roles found');
+        throw new Error('Aucun rôle trouvé');
       }
     } catch (err) {
-      const error = err instanceof Error ? err.message : 'Unknown error';
-      setError(error);
+      const errorMessage = err instanceof Error ? err.message : 'Erreur inconnue';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
   };
 
+  // Récupération des permissions
   const fetchPermissions = async () => {
     try {
       const response = await fetch('https://www.backend.lnb-intranet.globalitnet.org/roles/list-permissions/');
       const data = await response.json();
-      if (data) {
-        setPermissions(data);
+      // On s'attend à recevoir { permissions: [...] }
+      if (data && data.permissions && Array.isArray(data.permissions)) {
+        setPermissions(data.permissions);
       } else {
-        throw new Error('No permissions found');
+        throw new Error('Aucune permission trouvée');
       }
     } catch (err) {
-      const error = err instanceof Error ? err.message : 'Unknown error';
-      setError(error);
+      const errorMessage = err instanceof Error ? err.message : 'Erreur inconnue';
+      setError(errorMessage);
     }
   };
 
@@ -86,39 +94,38 @@ const RoleList = () => {
     fetchPermissions();
   }, []);
 
-  if (loading) {
-    return <div>Loading roles...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
-
+  // Ajout d'un rôle via l'API
   const handleAddRole = async () => {
-    const newRole = {
-      name: 'New role',
-      description: 'Role description',
-      permissions: selectedPermissions,
+    const newRoleData = {
+      name: newRole.name,
+      description: newRole.description,
+      parent_role_id: 0, // Modifiez ce champ si besoin
+      // On envoie un tableau d'identifiants (nombres) des permissions sélectionnées
+      permissions: selectedPermissions.map((id) => parseInt(id, 10)),
     };
 
     try {
       const response = await fetch('https://www.backend.lnb-intranet.globalitnet.org/roles/create-role/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newRole),
+        body: JSON.stringify(newRoleData),
       });
       const data = await response.json();
       if (data && data.success) {
-        alert('Role added successfully!');
-        fetchRoles(); // Refresh the roles
+        alert('Rôle ajouté avec succès !');
+        fetchRoles(); // Rafraîchit la liste des rôles
+        setIsModalOpen(false); // Ferme le modal
+        // Réinitialisation du formulaire du modal
+        setNewRole({ name: '', description: '', permissions: [] });
+        setSelectedPermissions([]);
       }
     } catch (err) {
-      setError('Error adding role');
+      setError('Erreur lors de l’ajout du rôle');
     }
   };
 
   const handleDeleteRole = async (roleId: string) => {
-    const confirmDelete = window.confirm('Are you sure you want to delete this role?');
+    const confirmDelete = window.confirm('Êtes-vous sûr de vouloir supprimer ce rôle ?');
     if (confirmDelete) {
       try {
         const response = await fetch(`https://www.backend.lnb-intranet.globalitnet.org/roles/delete-role/${roleId}/`, {
@@ -126,26 +133,42 @@ const RoleList = () => {
         });
         const data = await response.json();
         if (data && data.success) {
-          alert('Role deleted successfully!');
-          fetchRoles(); // Refresh the roles
+          alert('Rôle supprimé avec succès !');
+          fetchRoles();
         }
       } catch (err) {
-        setError('Error deleting role');
+        setError('Erreur lors de la suppression du rôle');
       }
     }
   };
 
   const handleEditRole = (role: Role) => {
-    alert(`Edit role: ${role.name}`);
+    alert(`Modifier le rôle : ${role.name}`);
   };
+
+  if (loading) {
+    return (
+      <PageContainer>
+        <p>Chargement des rôles...</p>
+      </PageContainer>
+    );
+  }
+
+  if (error) {
+    return (
+      <PageContainer>
+        <p style={{ color: 'red' }}>Erreur : {error}</p>
+      </PageContainer>
+    );
+  }
 
   return (
     <PageContainer>
       <div style={{ padding: '20px', backgroundColor: '#f0f8ff', borderRadius: '8px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h1 style={{ color: '#0056b3', fontWeight: 'bold' }}>Roles and Permissions List</h1>
+          <h1 style={{ color: '#0056b3', fontWeight: 'bold' }}>Liste des rôles et des permissions</h1>
           <button
-            onClick={handleAddRole}
+            onClick={() => setIsModalOpen(true)}
             style={{
               backgroundColor: '#007bff',
               color: 'white',
@@ -155,14 +178,14 @@ const RoleList = () => {
               borderRadius: '5px',
             }}
           >
-            Add Role
+            Ajouter un rôle
           </button>
         </div>
 
         <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '20px' }}>
           <thead>
             <tr style={{ backgroundColor: '#007bff', color: 'white' }}>
-              <th style={{ padding: '12px' }}>Name</th>
+              <th style={{ padding: '12px' }}>Nom</th>
               <th style={{ padding: '12px' }}>Description</th>
               <th style={{ padding: '12px' }}>Permissions</th>
               <th style={{ padding: '12px' }}>Actions</th>
@@ -175,9 +198,9 @@ const RoleList = () => {
                 <td style={{ padding: '12px' }}>{role.description}</td>
                 <td style={{ padding: '12px' }}>
                   <ul>
-                    {role.permissions.map((permission: Permission) => (
+                    {role.permissions.map((permission) => (
                       <li key={permission.id}>
-                        <strong>{permission.name}</strong>: {permission.description} (Level: {permission.level})
+                        <strong>{permission.name}</strong>: {permission.description} (Niveau : {permission.level})
                       </li>
                     ))}
                   </ul>
@@ -200,7 +223,7 @@ const RoleList = () => {
         {/* Pagination */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '20px' }}>
           <div>
-            <label htmlFor="rolesPerPage" style={{ marginRight: '10px' }}>Roles per page:</label>
+            <label htmlFor="rolesPerPage" style={{ marginRight: '10px' }}>Rôles par page :</label>
             <select
               id="rolesPerPage"
               value={rolesPerPage}
@@ -230,10 +253,10 @@ const RoleList = () => {
                 marginRight: '10px',
               }}
             >
-              Previous
+              Précédent
             </button>
             <span style={{ fontSize: '16px', fontWeight: 'bold' }}>
-              Page {currentPage} of {Math.ceil(roles.length / rolesPerPage)}
+              Page {currentPage} de {Math.ceil(roles.length / rolesPerPage)}
             </span>
             <button
               onClick={handleNextPage}
@@ -247,11 +270,102 @@ const RoleList = () => {
                 marginLeft: '10px',
               }}
             >
-              Next
+              Suivant
             </button>
           </div>
         </div>
       </div>
+
+      {/* Modal pour ajouter un rôle */}
+      {isModalOpen && (
+        <div
+          style={{
+            position: 'fixed',
+            top: '0',
+            left: '0',
+            right: '0',
+            bottom: '0',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: 'white',
+              padding: '20px',
+              borderRadius: '8px',
+              width: '400px',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            <h2>Ajouter un rôle</h2>
+            <input
+              type="text"
+              placeholder="Nom du rôle"
+              value={newRole.name}
+              onChange={(e) => setNewRole({ ...newRole, name: e.target.value })}
+              style={{ padding: '8px', marginBottom: '10px' }}
+            />
+            <textarea
+              placeholder="Description du rôle"
+              value={newRole.description}
+              onChange={(e) => setNewRole({ ...newRole, description: e.target.value })}
+              style={{ padding: '8px', marginBottom: '10px' }}
+            />
+            <label>Permissions</label>
+            <select
+              multiple
+              value={selectedPermissions}
+              onChange={(e) =>
+                setSelectedPermissions(
+                  [...e.target.selectedOptions].map((option) => option.value)
+                )
+              }
+              style={{ padding: '8px', marginBottom: '10px' }}
+            >
+              {permissions && permissions.length > 0 ? (
+                permissions.map((permission) => (
+                  <option key={permission.id} value={permission.id.toString()}>
+                    {permission.name}
+                  </option>
+                ))
+              ) : (
+                <option disabled>Aucune permission disponible</option>
+              )}
+            </select>
+            <button
+              onClick={handleAddRole}
+              style={{
+                backgroundColor: '#007bff',
+                color: 'white',
+                padding: '10px',
+                cursor: 'pointer',
+                borderRadius: '5px',
+                border: 'none',
+              }}
+            >
+              Ajouter
+            </button>
+            <button
+              onClick={() => setIsModalOpen(false)}
+              style={{
+                backgroundColor: '#dc3545',
+                color: 'white',
+                padding: '10px',
+                cursor: 'pointer',
+                borderRadius: '5px',
+                border: 'none',
+                marginTop: '10px',
+              }}
+            >
+              Fermer
+            </button>
+          </div>
+        </div>
+      )}
     </PageContainer>
   );
 };
