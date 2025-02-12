@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useReducer } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Button,
   Table,
@@ -16,23 +16,41 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  IconButton,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PageContainer from '@/app/(DashboardLayout)/components/container/PageContainer';
 import DashboardCard from '@/app/(DashboardLayout)/components/shared/DashboardCard';
-import DocumentImport from '@/app/(DashboardLayout)/documents/import/page'; // Importer le formulaire DocumentImport
+import DocumentImport from '@/app/(DashboardLayout)/documents/import/page';
+
+// Définition du type des documents
+interface DocumentType {
+  id: number;
+  title: string;
+  description: string;
+  fileType: string;
+  uploadedBy: string;
+  category: string;
+}
 
 const DocumentsArchived = () => {
-  const [documents, setDocuments] = useState([]);
+  const [documents, setDocuments] = useState<DocumentType[]>([]);
   const [open, setOpen] = useState(false);
 
+  // Fonction pour récupérer les documents archivés
   const fetchDocuments = async () => {
     try {
       const response = await fetch('https://www.backend.lnb-intranet.globalitnet.org/documents/archived/');
       const data = await response.json();
-      setDocuments(data.documents);
+
+      if (data.documents && Array.isArray(data.documents)) {
+        setDocuments(data.documents);
+      } else {
+        console.error("Format de données inattendu :", data);
+        setDocuments([]);
+      }
     } catch (error) {
       console.error('Erreur lors de la récupération des documents:', error);
     }
@@ -42,10 +60,7 @@ const DocumentsArchived = () => {
     fetchDocuments();
   }, []);
 
-  const handleOpenAdd = () => {
-    setOpen(true);
-  };
-
+  const handleOpenAdd = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   return (
@@ -68,7 +83,7 @@ const DocumentsArchived = () => {
                 <TableCell>Type de fichier</TableCell>
                 <TableCell>Ajouté par</TableCell>
                 <TableCell>Catégorie</TableCell>
-                <TableCell>Actions</TableCell> {/* Suppression de la colonne Tags */}
+                <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -93,7 +108,7 @@ const DocumentsArchived = () => {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={7} align="center">Aucun document disponible.</TableCell> {/* Ajuster la largeur de la colonne */}
+                  <TableCell colSpan={7} align="center">Aucun document disponible.</TableCell>
                 </TableRow>
               )}
             </TableBody>
@@ -104,8 +119,7 @@ const DocumentsArchived = () => {
       {/* Modal pour ajouter un document */}
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Ajouter un document</DialogTitle>
-        <DialogContent sx={{ width: '600px' }}> {/* Augmenter la largeur du formulaire */}
-          {/* Affichage du formulaire DocumentImport ici */}
+        <DialogContent sx={{ width: '600px' }}>
           <DocumentImport />
         </DialogContent>
         <DialogActions>

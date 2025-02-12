@@ -1,17 +1,18 @@
-"use client"
+'use client'
 
 import React, { useState } from 'react';
 import { TextField, Button, MenuItem, InputLabel, Select, FormControl, Box } from '@mui/material';
 
 const DocumentsAuditPage = () => {
-    const [document, setDocument] = useState('');
-    const [user, setUser] = useState('');
-    const [action, setAction] = useState('');
+    const [document, setDocument] = useState<string>(''); // Typage explicite
+    const [user, setUser] = useState<string>(''); // Typage explicite
+    const [action, setAction] = useState<string>(''); // Typage explicite
 
     // Liste des documents (à remplacer par des données Firebase plus tard)
     const documentsList = ["Document A", "Document B", "Document C"];
 
-    const handleSubmit = (event) => {
+    // Typage explicite pour handleSubmit
+    const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
         // Logique pour envoyer les données à Firebase
         console.log({ document, user, action });

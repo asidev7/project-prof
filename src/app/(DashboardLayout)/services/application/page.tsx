@@ -1,9 +1,15 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { TextField, Button, Container, Typography, Paper, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
+import { TextField, Button, Container, Typography, Paper, MenuItem, Select, FormControl, InputLabel, SelectChangeEvent } from '@mui/material';
 import { createApplication } from "@/services/services";
 import { getUsersList } from "@/services/users"; // Correction de l'import
+
+// Définir le type des utilisateurs
+interface User {
+  id: string;
+  name: string;
+}
 
 const ApplicationsAddPage = () => {
     const [applicationData, setApplicationData] = useState({
@@ -12,13 +18,14 @@ const ApplicationsAddPage = () => {
         userId: '',
     });
 
-    const [users, setUsers] = useState([]);
+    // Définir l'état 'users' comme un tableau d'objets de type User
+    const [users, setUsers] = useState<User[]>([]);
 
     useEffect(() => {
         const fetchUsers = async () => {
             try {
                 const usersList = await getUsersList(); // Utilisation de la bonne fonction
-                setUsers(usersList);
+                setUsers(usersList); // Mise à jour de l'état avec la liste des utilisateurs
             } catch (error) {
                 console.error("Erreur lors du chargement des utilisateurs", error);
             }
@@ -32,6 +39,15 @@ const ApplicationsAddPage = () => {
         setApplicationData((prevData) => ({
             ...prevData,
             [name as string]: value,
+        }));
+    };
+
+    // Correction du type de l'événement pour Select
+    const handleSelectChange = (event: SelectChangeEvent<string>) => {
+        const { value } = event.target;
+        setApplicationData((prevData) => ({
+            ...prevData,
+            userId: value,
         }));
     };
 
@@ -90,7 +106,7 @@ const ApplicationsAddPage = () => {
                         <Select
                             name="userId"
                             value={applicationData.userId}
-                            onChange={handleChange}
+                            onChange={handleSelectChange} // Utilisation de handleSelectChange
                         >
                             {users.map((user) => (
                                 <MenuItem key={user.id} value={user.id}>{user.name}</MenuItem>

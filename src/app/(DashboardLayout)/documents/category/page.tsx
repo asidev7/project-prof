@@ -1,13 +1,14 @@
-'use client';
+'use client'
 
 import React, { useState } from 'react';
 import { TextField, Button, Box } from '@mui/material';
 
 const DocumentCategoriesPage = () => {
-    const [name, setName] = useState('');
-    const [description, setDescription] = useState('');
+    const [name, setName] = useState<string>(''); // Typage explicite pour le state
+    const [description, setDescription] = useState<string>(''); // Typage explicite pour le state
 
-    const handleSubmit = (event) => {
+    // Typage explicite pour handleSubmit
+    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         // Logique pour envoyer les données à Firebase
         console.log({ name, description });

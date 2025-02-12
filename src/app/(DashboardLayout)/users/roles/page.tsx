@@ -1,4 +1,5 @@
 'use client';
+
 import React, { useEffect, useState } from 'react';
 import PageContainer from '@/app/(DashboardLayout)/components/container/PageContainer';
 import { FaEdit, FaTrashAlt } from 'react-icons/fa';
@@ -23,7 +24,7 @@ const RoleList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedPermissions, setSelectedPermissions] = useState<string[]>([]);
-  
+
   // État du modal d'ajout
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newRole, setNewRole] = useState({ name: '', description: '', permissions: [] });
@@ -239,36 +240,13 @@ const RoleList = () => {
               <option value={20}>20</option>
             </select>
           </div>
-
           <div>
-            <button
-              onClick={handlePreviousPage}
-              style={{
-                padding: '10px 20px',
-                backgroundColor: '#007bff',
-                color: 'white',
-                border: 'none',
-                cursor: 'pointer',
-                borderRadius: '5px',
-                marginRight: '10px',
-              }}
-            >
+            <button onClick={handlePreviousPage} disabled={currentPage === 1}>
               Précédent
             </button>
-            <span style={{ fontSize: '16px', fontWeight: 'bold' }}>
-              Page {currentPage} de {Math.ceil(roles.length / rolesPerPage)}
-            </span>
             <button
               onClick={handleNextPage}
-              style={{
-                padding: '10px 20px',
-                backgroundColor: '#007bff',
-                color: 'white',
-                border: 'none',
-                cursor: 'pointer',
-                borderRadius: '5px',
-                marginLeft: '10px',
-              }}
+              disabled={currentPage >= Math.ceil(roles.length / rolesPerPage)}
             >
               Suivant
             </button>
@@ -276,15 +254,15 @@ const RoleList = () => {
         </div>
       </div>
 
-      {/* Modal pour ajouter un rôle */}
+      {/* Modal d'ajout */}
       {isModalOpen && (
         <div
           style={{
             position: 'fixed',
-            top: '0',
-            left: '0',
-            right: '0',
-            bottom: '0',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
             backgroundColor: 'rgba(0, 0, 0, 0.5)',
             display: 'flex',
             justifyContent: 'center',
@@ -297,72 +275,78 @@ const RoleList = () => {
               padding: '20px',
               borderRadius: '8px',
               width: '400px',
-              display: 'flex',
-              flexDirection: 'column',
+              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
             }}
           >
             <h2>Ajouter un rôle</h2>
-            <input
-              type="text"
-              placeholder="Nom du rôle"
-              value={newRole.name}
-              onChange={(e) => setNewRole({ ...newRole, name: e.target.value })}
-              style={{ padding: '8px', marginBottom: '10px' }}
-            />
-            <textarea
-              placeholder="Description du rôle"
-              value={newRole.description}
-              onChange={(e) => setNewRole({ ...newRole, description: e.target.value })}
-              style={{ padding: '8px', marginBottom: '10px' }}
-            />
-            <label>Permissions</label>
-            <select
-              multiple
-              value={selectedPermissions}
-              onChange={(e) =>
-                setSelectedPermissions(
-                  [...e.target.selectedOptions].map((option) => option.value)
-                )
-              }
-              style={{ padding: '8px', marginBottom: '10px' }}
-            >
-              {permissions && permissions.length > 0 ? (
-                permissions.map((permission) => (
-                  <option key={permission.id} value={permission.id.toString()}>
+            <div style={{ marginBottom: '10px' }}>
+              <label>Nom du rôle:</label>
+              <input
+                type="text"
+                value={newRole.name}
+                onChange={(e) => setNewRole({ ...newRole, name: e.target.value })}
+                style={{
+                  width: '100%',
+                  padding: '8px',
+                  marginTop: '5px',
+                  borderRadius: '5px',
+                  border: '1px solid #007bff',
+                }}
+              />
+            </div>
+            <div style={{ marginBottom: '10px' }}>
+              <label>Description:</label>
+              <input
+                type="text"
+                value={newRole.description}
+                onChange={(e) => setNewRole({ ...newRole, description: e.target.value })}
+                style={{
+                  width: '100%',
+                  padding: '8px',
+                  marginTop: '5px',
+                  borderRadius: '5px',
+                  border: '1px solid #007bff',
+                }}
+              />
+            </div>
+
+            <div style={{ marginBottom: '10px' }}>
+              <label>Permissions:</label>
+              <select
+                multiple
+                value={selectedPermissions}
+                onChange={(e) =>
+                  setSelectedPermissions(
+                    [...e.target.selectedOptions].map((option) => option.value)
+                  )
+                }
+                style={{
+                  width: '100%',
+                  padding: '8px',
+                  marginTop: '5px',
+                  borderRadius: '5px',
+                  border: '1px solid #007bff',
+                }}
+              >
+                {permissions.map((permission) => (
+                  <option key={permission.id} value={String(permission.id)}>
                     {permission.name}
                   </option>
-                ))
-              ) : (
-                <option disabled>Aucune permission disponible</option>
-              )}
-            </select>
-            <button
-              onClick={handleAddRole}
-              style={{
-                backgroundColor: '#007bff',
-                color: 'white',
-                padding: '10px',
-                cursor: 'pointer',
-                borderRadius: '5px',
-                border: 'none',
-              }}
-            >
-              Ajouter
-            </button>
-            <button
-              onClick={() => setIsModalOpen(false)}
-              style={{
-                backgroundColor: '#dc3545',
-                color: 'white',
-                padding: '10px',
-                cursor: 'pointer',
-                borderRadius: '5px',
-                border: 'none',
-                marginTop: '10px',
-              }}
-            >
-              Fermer
-            </button>
+                ))}
+              </select>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <button onClick={() => setIsModalOpen(false)} style={{ padding: '8px 16px' }}>
+                Annuler
+              </button>
+              <button
+                onClick={handleAddRole}
+                style={{ backgroundColor: '#007bff', color: 'white', padding: '8px 16px' }}
+              >
+                Ajouter
+              </button>
+            </div>
           </div>
         </div>
       )}
