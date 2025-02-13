@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { FaSave } from 'react-icons/fa';
 import PageContainer from '@/app/(DashboardLayout)/components/container/PageContainer';
-import { getCSRFToken } from '@/utils/csrf';
 import './AddUser.css';
 
 interface FormData {
@@ -43,22 +42,9 @@ const UserAddUser = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [csrfToken, setCsrfToken] = useState<string | null>(null);
   const [validationErrors, setValidationErrors] = useState<Partial<FormData>>({});
 
   useEffect(() => {
-    // Récupérer le CSRF token depuis le cookie
-    const fetchCsrfToken = () => {
-      const token = getCSRFToken();
-      if (token) {
-        setCsrfToken(token);
-      } else {
-        setError('Le token CSRF est introuvable');
-      }
-    };
-
-    fetchCsrfToken();
-
     // Charger la liste des rôles
     const fetchRoles = async () => {
       try {
@@ -68,7 +54,7 @@ const UserAddUser = () => {
           credentials: 'include',
         });
 
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        if (!response.ok) throw new Error(`Erreur ${response.status}`);
         const data = await response.json();
         setRoles(data.roles || []);
       } catch (err) {
@@ -100,12 +86,6 @@ const UserAddUser = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Vérification du CSRF token avant de soumettre le formulaire
-    if (!csrfToken) {
-      setError('Le token CSRF est manquant');
-      return;
-    }
-
     if (!validateForm()) {
       setError('Veuillez corriger les erreurs.');
       return;
@@ -121,9 +101,8 @@ const UserAddUser = () => {
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-  
         },
-        credentials: 'include', // Envoi des cookies avec la requête
+        credentials: 'include',
         body: JSON.stringify(formData),
       });
 
