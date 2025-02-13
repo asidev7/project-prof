@@ -121,8 +121,6 @@ const UserAddUser = () => {
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-          'X-CSRFToken': csrfToken,  // Assurez-vous que le CSRF Token est bien inclus
-          'Referer': 'https://www.backend.lnb-intranet.globalitnet.org/'  ,  // Ajouter l'URL referer
   
         },
         credentials: 'include', // Envoi des cookies avec la requête
