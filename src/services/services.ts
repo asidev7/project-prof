@@ -4,30 +4,32 @@ import axios from 'axios';
 const API_BASE_URL = 'https://www.backend.lnb-intranet.globalitnet.org';
 
 
-export const createApplication = async (userId: string, data: { name: string; description: string }) => {
+export const createApplication = async (data: { name: string; description: string }) => {
     try {
-        const token = localStorage.getItem('authToken'); // Récupère le token d'authentification
-        const csrfToken = getCsrfToken(); // Récupère dynamiquement le CSRF token
-
-        const url = `${API_BASE_URL}/services/create-application/${userId}/`; // Ajoutez userId à l'URL
-        console.log(`Envoi à l'URL: ${url}`);
+        const token = localStorage.getItem('authToken');
+        const csrfToken = getCsrfToken();
+        
+        console.log(`Token d'authentification : ${token}`);
+        console.log(`CSRF Token : ${csrfToken}`);
+        console.log(`Envoi à l'URL: ${API_BASE_URL}/services/create-application/`);
         console.log("Données envoyées :", data);
 
-        const response = await axios.post(url, data, {
+        const response = await axios.post(`${API_BASE_URL}/services/create-application/`, data, {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
-                'X-CSRFTOKEN': csrfToken, // Ajoute le CSRF token
-                'Authorization': `Bearer ${token}`, // Ajoute le token d'authentification
+                'X-CSRFTOKEN': csrfToken,
+                'Authorization': `Bearer ${token}`,
             },
         });
 
-        return response.data; // Retourne la réponse de l'API
+        return response.data;
     } catch (error: any) {
         console.error("Erreur lors de la création de l'application:", error.response?.data || error.message);
-        throw error; // Relance l'erreur pour gestion
+        throw error;
     }
 };
+
 
 
 export const getRequestHistory = async (requestId: string) => {
@@ -53,6 +55,7 @@ export const getRequestHistory = async (requestId: string) => {
     throw error; // Relance l'erreur pour gestion ultérieure
   }
 };
+
 
 // Fonction pour récupérer le CSRF token depuis les cookies (ou autre méthode si nécessaire)
 const getCsrfToken = (): string => {
@@ -111,7 +114,6 @@ const deleteRequest = async (url: string) => {
   }
 };
 
-<<<<<<< HEAD
 // Fonction pour créer un nouveau service
 export const createService = async (data: {
   name: string;
@@ -120,28 +122,23 @@ export const createService = async (data: {
   function_id: number;
   chef_id: number;
 }) => {
-=======
-
-export const createService = async (payload: { name: string, description: string, department_id: number, function_id: number, chef_id: number, csrfToken: string }) => {
->>>>>>> 74e50adf87ca2e0e168bf9405ddfee7f008f3442
   try {
-    const response = await fetch('/api/services', {
-      method: 'POST',
+    const token = localStorage.getItem('authToken'); // Récupère le token d'authentification
+    const csrfToken = getCsrfToken(); // Utilise la méthode pour récupérer le CSRF token
+
+    const response = await axios.post(`${API_BASE_URL}/services/create-service/`, data, {
       headers: {
+        'accept': 'application/json',
         'Content-Type': 'application/json',
-        'X-CSRF-Token': payload.csrfToken,
+        'X-CSRFTOKEN': csrfToken, // CSRF token
+        'Authorization': `Bearer ${token}`, // Token d'authentification si nécessaire
       },
-      body: JSON.stringify({
-        name: payload.name,
-        description: payload.description,
-        department_id: payload.department_id,
-        function_id: payload.function_id,
-        chef_id: payload.chef_id,
-      }),
     });
-    return response.json();
-  } catch (error) {
-    throw new Error('Failed to create service');
+
+    return response.data; // Retourne les données de la réponse
+  } catch (error: any) {
+    console.error('Erreur lors de la création du service:', error.response?.data || error.message);
+    throw error; // Relance l'erreur pour une gestion ultérieure
   }
 };
 
@@ -241,6 +238,7 @@ export const getApplicationsByUserId = (userId: string) => {
 
 
 
+
 export const createServiceRequest = (data: any) => {
   return postRequest('/services/create-service-request/', data);
 };
@@ -270,11 +268,25 @@ export const deleteDepartment = (departmentId: string) => {
   return deleteRequest(`/services/departments/${departmentId}/delete/`);
 };
 
+export const getDepartmentSupervisor = (departmentId: string) => {
+  return getRequest(`/services/departments/${departmentId}/supervisor/`);
+};
+
 export const updateDepartment = (departmentId: string, data: any) => {
   return putRequest(`/services/departments/${departmentId}/update/`, data);
 };
 
-// Payslip Management
+// Export Applications
+export const exportApplications = (userId: string) => {
+  return getRequest(`/services/export-applications/${userId}/`);
+};
+
+// Service Request Notifications
+export const getServiceRequestNotifications = () => {
+  return getRequest('/services/service-request-notifications/');
+};
+
+// Payslips Management
 export const getPayslips = () => {
   return getRequest('/services/payslips/');
 };
@@ -283,10 +295,87 @@ export const createPayslip = (data: any) => {
   return postRequest('/services/payslips/create/', data);
 };
 
-export const deletePayslip = (payslipId: string) => {
-  return deleteRequest(`/services/payslips/${payslipId}/delete/`);
+export const getPayslip = (id: string) => {
+  return getRequest(`/services/payslips/${id}/`);
 };
 
-export const updatePayslip = (payslipId: string, data: any) => {
-  return putRequest(`/services/payslips/${payslipId}/update/`, data);
+export const deletePayslip = (id: string) => {
+  return deleteRequest(`/services/payslips/${id}/delete/`);
+};
+
+export const updatePayslip = (id: string, data: any) => {
+  return putRequest(`/services/payslips/${id}/update/`, data);
+};
+
+// Group Services
+export const associateServiceToGroup = (groupId: string, serviceId: string) => {
+  return postRequest(`/services/associate-service-to-group/${groupId}/${serviceId}/`, {});
+};
+
+export const removeServiceFromGroup = (groupId: string, serviceId: string) => {
+  return postRequest(`/services/remove-service-from-group/${groupId}/${serviceId}/`, {});
+};
+
+export const getGroupServices = (groupId: string) => {
+  return getRequest(`/services/view-group-services/${groupId}/`);
+};
+
+// Support Requests
+export const createSupportRequest = (userId: string, data: any) => {
+  return postRequest(`/services/support-requests/create/${userId}/`, data);
+};
+
+export const exportSupportRequests = (userId: string) => {
+  return getRequest(`/services/support-requests/export/${userId}/`);
+};
+
+export const acceptSupportRequest = (id: string, userId: string) => {
+  return postRequest(`/services/support-requests/${id}/accept/${userId}/`, {});
+};
+
+export const deleteSupportRequest = (id: string, userId: string) => {
+  return deleteRequest(`/services/support-requests/${id}/delete/${userId}/`);
+};
+
+export const rejectSupportRequest = (id: string, userId: string) => {
+  return postRequest(`/services/support-requests/${id}/reject/${userId}/`, {});
+};
+
+export const updateSupportRequest = (id: string, userId: string, data: any) => {
+  return putRequest(`/services/support-requests/${id}/update/${userId}/`, data);
+};
+
+export const getSupportRequest = (id: string, userId: string) => {
+  return getRequest(`/services/support-requests/${id}/${userId}/`);
+};
+
+export const getSupportRequestsByUserId = (userId: string) => {
+  return getRequest(`/services/support-requests/${userId}/`);
+};
+
+// Service Requests
+export const getServiceRequests = () => {
+  return getRequest('/services/list-service-requests/');
+};
+
+export const filterServiceRequests = (params: any) => {
+  return getRequest(`/services/filter-service-requests/?${new URLSearchParams(params).toString()}`);
+};
+
+// Update Service and Requests
+export const updateRequestStatus = (requestId: string, data: any) => {
+  return postRequest(`/services/update-request-status/${requestId}/`, data);
+};
+
+export const updateServiceRequest = (requestId: string, data: any) => {
+  return postRequest(`/services/update-service-request/${requestId}/`, data);
+};
+
+export const updateService = (serviceId: string, data: any) => {
+  return postRequest(`/services/update-service/${serviceId}/`, data);
+};
+
+// View Service Request Details
+export const viewServiceRequestDetails = (requestId: string) => {
+  return getRequest(`/services/view-service-request-details/${requestId}/`);
 };
