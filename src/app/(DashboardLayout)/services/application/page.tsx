@@ -1,16 +1,13 @@
 'use client';
-
-<<<<<<< HEAD
-import React, { useState } from 'react';
-import { TextField, Button, Container, Typography, Paper } from '@mui/material';
-=======
 import React, { useState, useEffect } from 'react';
-import { TextField, Button, Container, Typography, Paper, MenuItem, Select, FormControl, InputLabel, SelectChangeEvent } from '@mui/material';
->>>>>>> 74e50adf87ca2e0e168bf9405ddfee7f008f3442
+import { 
+    TextField, Button, Container, Typography, Paper, 
+    MenuItem, Select, FormControl, InputLabel, SelectChangeEvent 
+} from '@mui/material';
 import { createApplication } from "@/services/services";
-import { loginUser, logoutUser } from "@/services/users"; // Importation des fonctions d'authentification
+import { loginUser,getUsersList } from "@/services/users"; 
 
-// Définir le type des utilisateurs
+// Définition du type des utilisateurs
 interface User {
   id: string;
   name: string;
@@ -22,20 +19,17 @@ const ApplicationsAddPage = () => {
     const [applicationData, setApplicationData] = useState({
         name: '',
         description: '',
+        userId: '',
     });
+    const [users, setUsers] = useState<User[]>([]);
     const [error, setError] = useState('');
 
-<<<<<<< HEAD
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-=======
-    // Définir l'état 'users' comme un tableau d'objets de type User
-    const [users, setUsers] = useState<User[]>([]);
-
+    // Récupérer la liste des utilisateurs
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const usersList = await getUsersList(); // Utilisation de la bonne fonction
-                setUsers(usersList); // Mise à jour de l'état avec la liste des utilisateurs
+                const usersList = await getUsersList(); // Assurez-vous que cette fonction est bien importée
+                setUsers(usersList);
             } catch (error) {
                 console.error("Erreur lors du chargement des utilisateurs", error);
             }
@@ -44,8 +38,8 @@ const ApplicationsAddPage = () => {
         fetchUsers();
     }, []);
 
-    const handleChange = (e: React.ChangeEvent<{ name?: string; value: unknown }>) => {
->>>>>>> 74e50adf87ca2e0e168bf9405ddfee7f008f3442
+    // Gestion des changements dans les champs texte
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setApplicationData((prevData) => ({
             ...prevData,
@@ -53,26 +47,25 @@ const ApplicationsAddPage = () => {
         }));
     };
 
-<<<<<<< HEAD
+    // Gestion des changements pour le Select
+    const handleSelectChange = (event: SelectChangeEvent<string>) => {
+        setApplicationData((prevData) => ({
+            ...prevData,
+            userId: event.target.value,
+        }));
+    };
+
+    // Connexion utilisateur
     const handleLogin = async () => {
         try {
-            const credentials = { username, password };
-            await loginUser(credentials);  // Appel de la fonction de connexion
+            await loginUser({ username, password });
             console.log('Utilisateur connecté');
         } catch (err) {
             setError('Erreur lors de la connexion');
         }
-=======
-    // Correction du type de l'événement pour Select
-    const handleSelectChange = (event: SelectChangeEvent<string>) => {
-        const { value } = event.target;
-        setApplicationData((prevData) => ({
-            ...prevData,
-            userId: value,
-        }));
->>>>>>> 74e50adf87ca2e0e168bf9405ddfee7f008f3442
     };
 
+    // Soumission du formulaire d'application
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -81,15 +74,20 @@ const ApplicationsAddPage = () => {
             return;
         }
 
+        if (!applicationData.name || !applicationData.description || !applicationData.userId) {
+            alert("Veuillez remplir tous les champs.");
+            return;
+        }
+
         try {
-            const response = await createApplication(username, {
+            const response = await createApplication(applicationData.userId, {
                 name: applicationData.name,
                 description: applicationData.description,
             });
 
             console.log('Application créée avec succès:', response);
             alert('Application créée avec succès !');
-            setApplicationData({ name: '', description: '' });
+            setApplicationData({ name: '', description: '', userId: '' });
         } catch (error) {
             console.error("Erreur lors de la création de l'application:", error);
             alert("Une erreur est survenue lors de la création de l'application.");
@@ -159,14 +157,12 @@ const ApplicationsAddPage = () => {
                         onChange={handleChange}
                     />
 
-<<<<<<< HEAD
-=======
                     <FormControl fullWidth margin="normal" required>
                         <InputLabel>Utilisateur</InputLabel>
                         <Select
                             name="userId"
                             value={applicationData.userId}
-                            onChange={handleSelectChange} // Utilisation de handleSelectChange
+                            onChange={handleSelectChange} // Correction ici
                         >
                             {users.map((user) => (
                                 <MenuItem key={user.id} value={user.id}>{user.name}</MenuItem>
@@ -174,7 +170,6 @@ const ApplicationsAddPage = () => {
                         </Select>
                     </FormControl>
 
->>>>>>> 74e50adf87ca2e0e168bf9405ddfee7f008f3442
                     <Button
                         variant="contained"
                         color="primary"

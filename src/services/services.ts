@@ -41,8 +41,6 @@ export const getRequestHistory = async (requestId: string) => {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'X-CSRFTOKEN': csrfToken, // CSRF token
-        'Authorization': `Bearer ${localStorage.getItem('authToken')}`, // Auth token
       },
     });
 
@@ -111,19 +109,8 @@ const deleteRequest = async (url: string) => {
   }
 };
 
-<<<<<<< HEAD
-// Fonction pour créer un nouveau service
-export const createService = async (data: {
-  name: string;
-  description: string;
-  department_id: number;
-  function_id: number;
-  chef_id: number;
-}) => {
-=======
 
 export const createService = async (payload: { name: string, description: string, department_id: number, function_id: number, chef_id: number, csrfToken: string }) => {
->>>>>>> 74e50adf87ca2e0e168bf9405ddfee7f008f3442
   try {
     const response = await fetch('/api/services', {
       method: 'POST',
