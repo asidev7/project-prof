@@ -1,23 +1,20 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState } from "react";
-import { getServices } from "@/services/services";
-import {
-  Container,
-  Typography,
-  List,
-  ListItem,
-  ListItemText,
-  Paper,
-  CircularProgress,
-  Alert,
-  Box,
-  Chip,
-} from "@mui/material";
+import React, { useEffect, useState } from 'react';
+import { FaEdit, FaTrashAlt } from 'react-icons/fa';
+import PageContainer from '@/app/(DashboardLayout)/components/container/PageContainer';
+import { getServices } from '@/services/services';
+import './ServicesList.css';
+
+interface Service {
+  id: number;
+  name: string;
+  description: string;
+}
 
 const ServicesListPage = () => {
-  const [services, setServices] = useState<{ id: number; name: string; description: string }[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [services, setServices] = useState<Service[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -27,7 +24,6 @@ const ServicesListPage = () => {
         setServices(data);
       } catch (err) {
         setError("Erreur lors de la récupération des services.");
-        console.error(err);
       } finally {
         setLoading(false);
       }
@@ -36,56 +32,48 @@ const ServicesListPage = () => {
     fetchServices();
   }, []);
 
+  const handleDeleteService = async (serviceId: number) => {
+    if (window.confirm("Êtes-vous sûr de vouloir supprimer ce service ?")) {
+      try {
+        // Suppression fictive, adapter selon API
+        setServices(services.filter(service => service.id !== serviceId));
+        alert("Service supprimé avec succès!");
+      } catch (err) {
+        setError("Erreur lors de la suppression du service.");
+      }
+    }
+  };
+
+  if (loading) return <div>Chargement des services...</div>;
+  if (error) return <div>Erreur: {error}</div>;
+
   return (
-    <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
-      <Typography variant="h4" component="h1" gutterBottom sx={{ fontWeight: "bold", color: "primary.main" }}>
-        Liste des services
-      </Typography>
-
-      {loading && (
-        <Box display="flex" justifyContent="center" mt={4}>
-          <CircularProgress />
-        </Box>
-      )}
-
-      {error && (
-        <Alert severity="error" sx={{ mb: 3 }}>
-          {error}
-        </Alert>
-      )}
-
-      {!loading && !error && (
-        <Paper elevation={3} sx={{ p: 2 }}>
-          <List>
+    <PageContainer>
+      <div className="page-container">
+        <h1 className="page-title">Liste des Services</h1>
+        <table className="service-table">
+          <thead>
+            <tr>
+              <th>Nom</th>
+              <th>Description</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
             {services.map((service) => (
-              <ListItem
-                key={service.id}
-                sx={{
-                  mb: 1,
-                  borderRadius: 1,
-                  transition: "background-color 0.3s",
-                  "&:hover": { backgroundColor: "action.hover" },
-                }}
-              >
-                <ListItemText
-                  primary={
-                    <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                      {service.name}
-                    </Typography>
-                  }
-                  secondary={
-                    <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                      {service.description}
-                    </Typography>
-                  }
-                />
-                <Chip label="Détails" color="primary" sx={{ ml: 2 }} onClick={() => console.log("Détails cliqué")} />
-              </ListItem>
+              <tr key={service.id}>
+                <td>{service.name}</td>
+                <td>{service.description}</td>
+                <td className="actions">
+                  <FaEdit onClick={() => alert(`Modifier le service: ${service.name}`)} className="edit-icon" />
+                  <FaTrashAlt onClick={() => handleDeleteService(service.id)} className="delete-icon" />
+                </td>
+              </tr>
             ))}
-          </List>
-        </Paper>
-      )}
-    </Container>
+          </tbody>
+        </table>
+      </div>
+    </PageContainer>
   );
 };
 

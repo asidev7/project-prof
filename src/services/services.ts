@@ -43,8 +43,6 @@ export const getRequestHistory = async (requestId: string) => {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'X-CSRFTOKEN': csrfToken, // CSRF token
-        'Authorization': `Bearer ${localStorage.getItem('authToken')}`, // Auth token
       },
     });
 
@@ -114,6 +112,7 @@ const deleteRequest = async (url: string) => {
   }
 };
 
+
 // Fonction pour créer un nouveau service
 export const createService = async (data: {
   name: string;
@@ -121,6 +120,7 @@ export const createService = async (data: {
   department_id: number;
   function_id: number;
   chef_id: number;
+  csrfToken: string;
 }) => {
   try {
     const token = localStorage.getItem('authToken'); // Récupère le token d'authentification
@@ -141,6 +141,8 @@ export const createService = async (data: {
     throw error; // Relance l'erreur pour une gestion ultérieure
   }
 };
+
+
 
 // Fonction pour récupérer la liste des services
 export const getServices = async () => {
