@@ -30,6 +30,7 @@ const ServicesListPage = () => {
     };
 
     fetchServices();
+    
   }, []);
 
   const handleDeleteService = async (serviceId: number) => {

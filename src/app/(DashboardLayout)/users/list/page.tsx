@@ -2,7 +2,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import PageContainer from '@/app/(DashboardLayout)/components/container/PageContainer';
 import { FaEdit, FaTrashAlt } from 'react-icons/fa';
-import './UserList.css'
+import './UserList.css';
+
 interface User {
   id: number;
   nom: string;
@@ -25,7 +26,17 @@ const UserList = () => {
 
   const fetchUsers = useCallback(async () => {
     try {
-      const response = await fetch('https://www.backend.lnb-intranet.globalitnet.org/utilisateurs/list-users/');
+      const response = await fetch('https://www.backend.lnb-intranet.globalitnet.org/utilisateurs/list-users/', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Erreur HTTP: ${response.status}`);
+      }
+
       const data = await response.json();
       if (data?.utilisateurs) {
         setUsers(data.utilisateurs);
@@ -45,19 +56,29 @@ const UserList = () => {
 
   const handleDeleteUser = async (userId: number) => {
     const confirmDelete = window.confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?');
-    if (confirmDelete) {
-      try {
-        const response = await fetch(`https://www.backend.lnb-intranet.globalitnet.org/utilisateurs/delete-user/${userId}/`, {
-          method: 'DELETE',
-        });
-        const data = await response.json();
-        if (data?.success) {
-          alert('Utilisateur supprimé avec succès!');
-          setUsers(users.filter(user => user.id !== userId)); // Mettre à jour la liste sans l'utilisateur supprimé
-        }
-      } catch (err) {
-        setError('Erreur lors de la suppression de l\'utilisateur');
+    if (!confirmDelete) return;
+
+    try {
+      const response = await fetch(`https://www.backend.lnb-intranet.globalitnet.org/utilisateurs/delete-user/${userId}/`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Erreur HTTP: ${response.status}`);
       }
+
+      const data = await response.json();
+      if (data?.success) {
+        alert('Utilisateur supprimé avec succès!');
+        setUsers(users.filter(user => user.id !== userId));
+      } else {
+        throw new Error('Échec de la suppression de l’utilisateur.');
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erreur inconnue');
     }
   };
 
@@ -75,7 +96,7 @@ const UserList = () => {
 
   const handleUsersPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setUsersPerPage(Number(e.target.value));
-    setCurrentPage(1); // Réinitialiser la page à 1 après modification du nombre d'utilisateurs par page
+    setCurrentPage(1);
   };
 
   if (loading) {
@@ -83,7 +104,7 @@ const UserList = () => {
   }
 
   if (error) {
-    return <div>Erreur: {error}</div>;
+    return <div style={{ color: 'red' }}>Erreur: {error}</div>;
   }
 
   return (
@@ -139,11 +160,15 @@ const UserList = () => {
           </div>
 
           <div className="pagination-buttons">
-            <button onClick={handlePreviousPage} className="pagination-button">Précédent</button>
+            <button onClick={handlePreviousPage} className="pagination-button" disabled={currentPage === 1}>
+              Précédent
+            </button>
             <span className="pagination-info">
               Page {currentPage} sur {Math.ceil(users.length / usersPerPage)}
             </span>
-            <button onClick={handleNextPage} className="pagination-button">Suivant</button>
+            <button onClick={handleNextPage} className="pagination-button" disabled={currentPage >= Math.ceil(users.length / usersPerPage)}>
+              Suivant
+            </button>
           </div>
         </div>
       </div>

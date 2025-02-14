@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import { TextField, Button, Container, Typography, Paper } from '@mui/material';
 import { createService } from "@/services/services";
-import { getCSRFToken } from "@/utils/csrf"; // Import function to fetch CSRF token
 
 const ServicesAddPage = () => {
   const [serviceData, setServiceData] = useState({
@@ -21,33 +20,26 @@ const ServicesAddPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Retrieve CSRF token
-    const csrfToken = getCSRFToken();
-
-    if (!csrfToken) {
-      alert('CSRF token is missing.');
-      return;
-    }
-
     try {
-      // Prepare the data object with expected properties
+      // Préparation des données du service
       const servicePayload = {
         name: serviceData.name,
         description: serviceData.description,
-        department_id: 1,  // Example, replace with actual value
-        function_id: 2,    // Example, replace with actual value
-        chef_id: 3,       // Example, replace with actual value
-        csrfToken,        // Include CSRF token directly
+        department_id: 1, // Exemple, à remplacer
+        function_id: 2,   // Exemple, à remplacer
+        chef_id: 3,       // Exemple, à remplacer
       };
 
-      // Call createService with the payload
+      // Appel à l'API pour créer le service
       const response = await createService(servicePayload);
-      console.log('Service created successfully:', response);
-      alert('Service created successfully!');
-      setServiceData({ name: '', description: '' }); // Reset form
+      console.log('Service créé avec succès:', response);
+      alert('Service créé avec succès !');
+
+      // Réinitialisation du formulaire
+      setServiceData({ name: '', description: '' });
     } catch (error) {
-      console.error('Error occurred while creating the service:', error);
-      alert('An error occurred while creating the service.');
+      console.error("Erreur lors de la création du service :", error);
+      alert("Une erreur est survenue lors de la création du service.");
     }
   };
 
@@ -55,11 +47,11 @@ const ServicesAddPage = () => {
     <Container maxWidth="sm">
       <Paper elevation={3} sx={{ padding: 3, marginTop: 4 }}>
         <Typography variant="h5" gutterBottom>
-          Add a Service
+          Ajouter un service
         </Typography>
         <form onSubmit={handleSubmit}>
           <TextField
-            label="Service Name"
+            label="Nom du service"
             name="name"
             fullWidth
             margin="normal"
@@ -76,6 +68,7 @@ const ServicesAddPage = () => {
             rows={4}
             value={serviceData.description}
             onChange={handleChange}
+            required
           />
           <Button
             variant="contained"
@@ -84,7 +77,7 @@ const ServicesAddPage = () => {
             fullWidth
             sx={{ marginTop: 2 }}
           >
-            Add Service
+            Ajouter le service
           </Button>
         </form>
       </Paper>
