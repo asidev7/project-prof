@@ -1,14 +1,17 @@
 'use client';
 import React, { useState } from 'react';
-import { TextField, Button, Container, Typography, Paper } from '@mui/material';
-import { createService } from "@/services/services";
-import { getCSRFToken } from "@/utils/csrf"; // Import function to fetch CSRF token
+import { TextField, Button, Container, Typography, Paper, Snackbar, Alert } from '@mui/material';
+import { createService } from "@/services/services"; // Import de la fonction pour créer un service
 
 const ServicesAddPage = () => {
   const [serviceData, setServiceData] = useState({
     name: '',
     description: '',
   });
+
+  const [openSnackbar, setOpenSnackbar] = useState(false); // Pour contrôler l'affichage de l'alerte
+  const [alertMessage, setAlertMessage] = useState(''); // Le message à afficher dans l'alerte
+  const [alertSeverity, setAlertSeverity] = useState<'success' | 'error'>('success'); // Pour définir la couleur de l'alerte
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -21,34 +24,28 @@ const ServicesAddPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Retrieve CSRF token
-    const csrfToken = getCSRFToken();
-
-    if (!csrfToken) {
-      alert('CSRF token is missing.');
-      return;
-    }
-
     try {
-      // Prepare the data object with expected properties
-      const servicePayload = {
-        name: serviceData.name,
-        description: serviceData.description,
-        department_id: 1,  // Example, replace with actual value
-        function_id: 2,    // Example, replace with actual value
-        chef_id: 3,       // Example, replace with actual value
-        csrfToken,        // Include CSRF token directly
-      };
-
-      // Call createService with the payload
-      const response = await createService(servicePayload);
+      const response = await createService(serviceData);
       console.log('Service created successfully:', response);
-      alert('Service created successfully!');
-      setServiceData({ name: '', description: '' }); // Reset form
+      
+      // Affichage de l'alerte de succès
+      setAlertMessage('Service created successfully!');
+      setAlertSeverity('success');
+      setOpenSnackbar(true);
+
+      setServiceData({ name: '', description: '' }); // Réinitialisation du formulaire
     } catch (error) {
       console.error('Error occurred while creating the service:', error);
-      alert('An error occurred while creating the service.');
+
+      // Affichage de l'alerte d'erreur
+      setAlertMessage('An error occurred while creating the service.');
+      setAlertSeverity('error');
+      setOpenSnackbar(true);
     }
+  };
+
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false); // Ferme le Snackbar
   };
 
   return (
@@ -88,6 +85,17 @@ const ServicesAddPage = () => {
           </Button>
         </form>
       </Paper>
+
+      {/* Snackbar pour afficher les alertes */}
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert onClose={handleCloseSnackbar} severity={alertSeverity}>
+          {alertMessage}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 };
