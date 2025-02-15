@@ -1,7 +1,8 @@
 'use client';
-
 import React, { useState } from 'react';
-import { TextField, Button, Container, Typography, Paper } from '@mui/material';
+import { 
+    TextField, Button, Container, Typography, Paper
+} from '@mui/material';
 import { createApplication } from "@/services/services";
 
 const ApplicationsAddPage = () => {
@@ -21,12 +22,13 @@ const ApplicationsAddPage = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        try {
-            const response = await createApplication({
-                name: applicationData.name,
-                description: applicationData.description,
-            });
+        if (!applicationData.name || !applicationData.description) {
+            alert("Veuillez remplir tous les champs.");
+            return;
+        }
 
+        try {
+            const response = await createApplication(applicationData);
             console.log('Application créée avec succès:', response);
             alert('Application créée avec succès !');
             setApplicationData({ name: '', description: '' });
@@ -62,6 +64,7 @@ const ApplicationsAddPage = () => {
                         rows={4}
                         value={applicationData.description}
                         onChange={handleChange}
+                        required
                     />
 
                     <Button
