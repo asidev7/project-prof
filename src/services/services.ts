@@ -64,17 +64,30 @@ const getCsrfToken = (): string => {
 // Fonction générique pour effectuer les requêtes POST (Unique déclaration)
 const postRequest = async (url: string, data: any) => {
   try {
+    console.log("Envoi de la requête à:", `${API_BASE_URL}${url}`);
+    console.log("Données envoyées:", JSON.stringify(data, null, 2));
+
     const response = await axios.post(`${API_BASE_URL}${url}`, data, {
-      headers: {
-        'Content-Type': 'application/json', // Assurez-vous que l'API attend du JSON
-      },
+      headers: { 'Content-Type': 'application/json' },
     });
+
+    console.log("Réponse du serveur:", response.data);
     return response.data;
   } catch (error: any) {
-    console.error('Erreur lors de la requête POST:', error.response?.data || error.message);
+    console.error("Erreur lors de la requête POST:", error.message);
+
+    if (error.response) {
+      console.error("Statut HTTP:", error.response.status);
+      console.error("Détails de l'erreur:", JSON.stringify(error.response.data, null, 2));
+    } else {
+      console.error("Erreur réseau:", error.message);
+    }
+
     throw error;
   }
 };
+
+
 
 // Fonction générique pour effectuer les requêtes GET
 const getRequest = async (url: string) => {
@@ -113,9 +126,18 @@ const deleteRequest = async (url: string) => {
 export const createService = async (data: {
   name: string;
   description: string;
+<<<<<<< HEAD
 }) => {
   try {
     const token = localStorage.getItem("authToken");
+=======
+  department_id: number;
+  function_id: number;
+  chef_id: number;
+}) => {
+  try {
+    const token = localStorage.getItem("authToken"); // Récupère le token d'authentification
+>>>>>>> 146a0c7 (Résolution des conflits)
 
     const response = await axios.post(
       `${API_BASE_URL}/services/create-service/`,
@@ -124,7 +146,11 @@ export const createService = async (data: {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
+<<<<<<< HEAD
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
+=======
+          ...(token ? { Authorization: `Bearer ${token}` } : {}), // Ajoute l'authentification si disponible
+>>>>>>> 146a0c7 (Résolution des conflits)
         },
       }
     );
@@ -135,10 +161,13 @@ export const createService = async (data: {
       "Erreur lors de la création du service:",
       error.response?.data || error.message
     );
+<<<<<<< HEAD
     throw error;
+=======
+    throw error; // Relance l'erreur pour une gestion ultérieure
+>>>>>>> 146a0c7 (Résolution des conflits)
   }
 };
-
 
 
 // Fonction pour récupérer la liste des services
