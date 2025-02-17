@@ -8,7 +8,6 @@ const getRequest = async (url: string) => {
   try {
     // Récupération dynamique du token CSRF et d'authentification
     const authToken = localStorage.getItem('authToken');  
-    const csrfToken = localStorage.getItem('csrfToken'); // À récupérer dynamiquement si nécessaire
 
     // Configuration des headers
     const headers: Record<string, string> = {
@@ -16,7 +15,6 @@ const getRequest = async (url: string) => {
       'Content-Type': 'application/json',
     };
 
-    if (csrfToken) headers['X-CSRFTOKEN'] = csrfToken; 
     if (authToken) headers['Authorization'] = `Bearer ${authToken}`; 
 
     // Requête GET avec Axios
@@ -28,15 +26,6 @@ const getRequest = async (url: string) => {
   }
 };
 
-
-// Fonction pour récupérer le CSRF token depuis les cookies (ou autre méthode si nécessaire)
-const getCsrfToken = (): string => {
-  const cookieValue = document.cookie
-    .split('; ')
-    .find(row => row.startsWith('csrftoken='))
-    ?.split('=')[1];
-  return cookieValue || ''; // Retourne une valeur par défaut vide si non trouvé
-};
 
 //MEDIA
 /**
@@ -82,11 +71,6 @@ export const getMediaList = async () => {
 };
 
 
-
-
-
-
-
 // Fonction générique pour effectuer les requêtes POST
 const postRequest = async (url: string, data: any) => {
   try {
@@ -130,11 +114,65 @@ const deleteRequest = async (url: string) => {
 export const getDocumentsList = async () => {
   return await getRequest('/documents/documents/');
 };
+const fileToBase64 = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      // Si l'API attend uniquement la partie base64 sans le préfixe, utilisez :
+      // resolve((reader.result as string).split(',')[1]);
+      resolve(reader.result as string);
+    };
+    reader.onerror = (error) => reject(error);
+  });
+};
+
 
 // Create a document
-export const createDocument = (documentData: any) => {
-  return postRequest('/documents/documents/create/', documentData);
+export const createDocument = async (
+  title: string,
+  description: string,
+  fileType: string,
+  file: File
+) => {
+  try {
+    const authToken = localStorage.getItem('authToken');  
+
+    // Conversion du fichier en base64
+    const base64File = await fileToBase64(file);
+
+    // Préparation du payload en JSON
+    const payload = {
+      title,
+      description,
+      file_type: fileType,
+      file: base64File,
+    };
+
+    const headers: Record<string, string> = {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    };
+
+    if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
+
+    const response = await axios.post(
+      `${API_BASE_URL}/documents/documents/create/`,
+      payload,
+      { headers }
+    );
+
+    return response.data;
+  } catch (error: any) {
+    console.error(
+      '❌ Erreur lors de la création du document:',
+      error?.response?.status,
+      error?.response?.data || error.message
+    );
+    throw error;
+  }
 };
+
 
 // Update a document
 export const updateDocument = (id: string, documentData: any) => {

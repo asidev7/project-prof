@@ -5,18 +5,18 @@ import { TextField, Button, Typography, Box, MenuItem, Select, InputLabel, FormC
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import PageContainer from '@/app/(DashboardLayout)/components/container/PageContainer';
 import DashboardCard from '@/app/(DashboardLayout)/components/shared/DashboardCard';
+import { createDocument } from '@/services/document';
 
 const fileTypes = ['PDF', 'WORD', 'EXCEL', 'POWERPOINT', 'TEXT', 'JPG', 'PNG', 'MP4 video', 'MP3 Audio'];
-const categories = ['Rapport', 'Facture', 'Contrat', 'Autre'];
-const users = ['Utilisateur 1', 'Utilisateur 2', 'Utilisateur 3'];
 
 const DocumentImport = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [fileType, setFileType] = useState('PDF');
   const [file, setFile] = useState<File | null>(null);
-  const [uploadedBy, setUploadedBy] = useState('');
-  const [category, setCategory] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -24,14 +24,34 @@ const DocumentImport = () => {
     }
   };
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    console.log('Titre:', title);
-    console.log('Description:', description);
-    console.log('Type de fichier:', fileType);
-    console.log('Fichier:', file);
-    console.log('Ajouté par:', uploadedBy);
-    console.log('Catégorie:', category);
+
+    if (!file) {
+      setError('Veuillez sélectionner un fichier.');
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+    setSuccess(null);
+
+    try {
+      const response = await createDocument(title, description, fileType, file);
+      setSuccess('Document ajouté avec succès !');
+      console.log('✅ Réponse de l\'API:', response);
+
+      // Réinitialisation des champs
+      setTitle('');
+      setDescription('');
+      setFileType('PDF');
+      setFile(null);
+    } catch (error: any) {
+      setError('Une erreur est survenue lors de l\'ajout du document.');
+      console.error('❌ Erreur API:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -74,22 +94,11 @@ const DocumentImport = () => {
 
           {file && <Typography variant="body2" sx={{ marginTop: 1 }}>{file.name}</Typography>}
 
-          <FormControl fullWidth>
-            <InputLabel>Ajouté par</InputLabel>
-            <Select value={uploadedBy} onChange={(e) => setUploadedBy(e.target.value)}>
-              {users.map((user) => <MenuItem key={user} value={user}>{user}</MenuItem>)}
-            </Select>
-          </FormControl>
+          {error && <Typography color="error">{error}</Typography>}
+          {success && <Typography color="success.main">{success}</Typography>}
 
-          <FormControl fullWidth>
-            <InputLabel>Catégorie</InputLabel>
-            <Select value={category} onChange={(e) => setCategory(e.target.value)}>
-              {categories.map((cat) => <MenuItem key={cat} value={cat}>{cat}</MenuItem>)}
-            </Select>
-          </FormControl>
-
-          <Button type="submit" variant="contained" color="primary" sx={{ alignSelf: 'center', width: '50%', marginTop: 3 }}>
-            Envoyer
+          <Button type="submit" variant="contained" color="primary" disabled={loading} sx={{ alignSelf: 'center', width: '50%', marginTop: 3 }}>
+            {loading ? 'Envoi en cours...' : 'Envoyer'}
           </Button>
         </Box>
       </DashboardCard>
