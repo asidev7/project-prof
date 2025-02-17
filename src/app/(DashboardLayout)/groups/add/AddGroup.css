@@ -73,3 +73,21 @@ input[type="checkbox"] {
     color: green;
     margin-bottom: 15px;
 }
+
+/* Add this to your AddGroup.css file */
+.select-style {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    color: #333;
+    box-sizing: border-box;
+}
+
+.select-style:focus {
+    border-color: #007bff;
+    outline: none;
+    background-color: #e9f7fe;
+}

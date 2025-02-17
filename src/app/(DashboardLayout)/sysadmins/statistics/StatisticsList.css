@@ -1,0 +1,155 @@
+/* General Styles */
+.page-container {
+    margin: 20px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+}
+
+.page-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.add-btn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+
+.add-btn:hover {
+    background-color: #45a049;
+}
+
+.statistics-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.statistics-table th,
+.statistics-table td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+.statistics-table th {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.statistics-table td {
+    background-color: #ffffff;
+}
+
+.statistics-table .no-data {
+    text-align: center;
+    font-style: italic;
+    color: #999;
+}
+
+.statistics-table .edit-btn,
+.statistics-table .delete-btn {
+    background-color: #f0ad4e;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+.statistics-table .edit-btn:hover {
+    background-color: #ec971f;
+}
+
+.statistics-table .delete-btn {
+    background-color: #d9534f;
+}
+
+.statistics-table .delete-btn:hover {
+    background-color: #c9302c;
+}
+
+/* Modal Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 400px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.modal h2 {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.modal input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.modal input:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: space-between;
+}
+
+.save-btn,
+.close-btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    border: none;
+}
+
+.save-btn {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.save-btn:hover {
+    background-color: #45a049;
+}
+
+.close-btn {
+    background-color: #f44336;
+    color: white;
+}
+
+.close-btn:hover {
+    background-color: #e53935;
+}

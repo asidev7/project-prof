@@ -13,6 +13,7 @@ import {
   IconFileAnalytics,
   IconMessage,
   IconFolder,
+  IconFileDownload,
   IconShield,
   IconChartHistogram,
   IconRobot,
@@ -321,30 +322,45 @@ const Menuitems = [
   },
 
   {
-    navlabel: true,
-    subheader: "Administration",
-  },
-  {
-    id: uniqueId(),
-    title: "Rôles & Permissions",
-    icon: IconKey,
-    href: "/admin/roles",
-    subtitle: "Gestion des accès",
-  },
-  {
-    id: uniqueId(),
-    title: "Organigramme",
-    icon: IconHierarchy,
-    href: "/admin/organization",
-    subtitle: "Structure hiérarchique",
-  },
-  {
-    id: uniqueId(),
-    title: "Rapports système",
-    icon: IconFileAnalytics,
-    href: "/admin/reports",
-    subtitle: "Export des données",
-  },
+  navlabel: true,
+  subheader: "Administration",
+},
+{
+  id: uniqueId(),
+  title: "Organigramme",
+  icon: IconHierarchy,
+  href: "/sysadmins/organization",
+  subtitle: "Structure hiérarchique",
+},
+{
+  id: uniqueId(),
+  title: "Exports de Rapports",
+  icon: IconFileDownload,
+  href: "/sysadmins/report_exports",
+  subtitle: "Export des rapports système",
+},
+{
+  id: uniqueId(),
+  title: "Rapports Système",
+  icon: IconFileAnalytics,
+  href: "/sysadmins/reports",
+  subtitle: "Gestion des rapports",
+},
+{
+  id: uniqueId(),
+  title: "Planification d'Export",
+  icon: IconClock,
+  href: "/sysadmins/schedule_report_export",
+  subtitle: "Automatiser l'export des rapports",
+},
+{
+  id: uniqueId(),
+  title: "Statistiques Système",
+  icon: IconChartHistogram,
+  href: "/sysadmins/statistics",
+  subtitle: "Suivi des performances",
+},
+
 ];
 
 export default Menuitems;

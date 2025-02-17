@@ -1,12 +1,14 @@
 'use client';
 
 import React, { useState } from 'react';
+import PageContainer from '@/app/(DashboardLayout)/components/container/PageContainer';
+import DashboardCard from '@/app/(DashboardLayout)/components/shared/DashboardCard';
 
-const AddRole = () => {
+const AddPermission = () => {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
-    parent_role_id: 0,
+    level: '',
   });
 
   const [loading, setLoading] = useState(false);
@@ -24,11 +26,11 @@ const AddRole = () => {
     setMessage(null);
 
     try {
-      const response = await fetch('https://www.backend.lnb-intranet.globalitnet.org/roles/create-role/', {
+      const response = await fetch('https://www.backend.lnb-intranet.globalitnet.org/roles/create-permission/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ ...formData, parent_role_id: Number(formData.parent_role_id) }),
+        body: JSON.stringify(formData),
       });
 
       if (!response.ok) {
@@ -36,8 +38,8 @@ const AddRole = () => {
         throw new Error(errorData.message || `Erreur ${response.status}`);
       }
 
-      setMessage('Rôle ajouté avec succès!');
-      setFormData({ name: '', description: '', parent_role_id: 0 });
+      setMessage('Permission ajoutée avec succès!');
+      setFormData({ name: '', description: '', level: '' });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erreur lors de l\'ajout.');
     } finally {
@@ -46,52 +48,71 @@ const AddRole = () => {
   };
 
   return (
-    <div className="p-6 bg-gray-100 rounded-lg shadow-md">
-      <h2 className="text-xl font-bold text-gray-800 mb-4">Ajouter un Rôle</h2>
+    <PageContainer>
+      <DashboardCard>
+        <div className="p-6 bg-gray-100 rounded-lg shadow-md">
+          <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">Ajouter une Permission</h2>
 
-      {message && <div className="p-2 mb-3 text-green-700 bg-green-200 rounded">{message}</div>}
-      {error && <div className="p-2 mb-3 text-red-700 bg-red-200 rounded">{error}</div>}
+          {message && <div className="p-2 mb-3 text-green-700 bg-green-200 rounded-md">{message}</div>}
+          {error && <div className="p-2 mb-3 text-red-700 bg-red-200 rounded-md">{error}</div>}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          type="text"
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-          placeholder="Nom du rôle"
-          required
-          className="w-full p-3 border rounded"
-        />
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label htmlFor="name" className="block text-gray-700 mb-2">Nom de la permission</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Nom de la permission"
+                required
+                className="w-full p-4 bg-white border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500 transition duration-300 ease-in-out"
+              />
+            </div>
 
-        <input
-          type="text"
-          name="description"
-          value={formData.description}
-          onChange={handleChange}
-          placeholder="Description"
-          required
-          className="w-full p-3 border rounded"
-        />
+            <div>
+              <label htmlFor="description" className="block text-gray-700 mb-2">Description</label>
+              <input
+                type="text"
+                id="description"
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                placeholder="Description"
+                required
+                className="w-full p-4 bg-white border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500 transition duration-300 ease-in-out"
+              />
+            </div>
 
-        <input
-          type="number"
-          name="parent_role_id"
-          value={formData.parent_role_id}
-          onChange={handleChange}
-          placeholder="ID du rôle parent (0 si aucun)"
-          className="w-full p-3 border rounded"
-        />
+            <div>
+              <label htmlFor="level" className="block text-gray-700 mb-2">Niveau de la permission</label>
+              <input
+                type="text"
+                id="level"
+                name="level"
+                value={formData.level}
+                onChange={handleChange}
+                placeholder="Niveau de la permission"
+                required
+                className="w-full p-4 bg-white border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500 transition duration-300 ease-in-out"
+              />
+            </div>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full p-3 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-blue-400"
-        >
-          {loading ? 'Ajout en cours...' : 'Ajouter Rôle'}
-        </button>
-      </form>
-    </div>
+            <div>
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full p-4 bg-blue-600 text-white rounded-md shadow-lg hover:bg-blue-700 disabled:bg-blue-400 transition duration-300 ease-in-out"
+              >
+                {loading ? 'Ajout en cours...' : 'Ajouter Permission'}
+              </button>
+            </div>
+          </form>
+        </div>
+      </DashboardCard>
+    </PageContainer>
   );
 };
 
-export default AddRole;
+export default AddPermission;

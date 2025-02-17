@@ -1,0 +1,91 @@
+.page-container {
+    padding: 20px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.page-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.download-csv {
+    margin-bottom: 10px;
+}
+
+.download-btn {
+    background: #4caf50;
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.download-btn:hover {
+    background: #45a049;
+}
+
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.report-table th,
+.report-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+}
+
+.report-table th {
+    background: #f4f4f4;
+    font-weight: bold;
+}
+
+.actions {
+    text-align: center;
+}
+
+.download-icon,
+.delete-icon {
+    cursor: pointer;
+    margin: 0 5px;
+    font-size: 18px;
+}
+
+.download-icon:hover {
+    color: green;
+}
+
+.delete-icon:hover {
+    color: red;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 15px;
+    gap: 10px;
+}
+
+.pagination-btn {
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+    background: #007bff;
+    color: white;
+    border-radius: 5px;
+}
+
+.pagination-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}

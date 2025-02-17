@@ -15,14 +15,7 @@ const PermissionList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(0);
-  const [permissionsPerPage, setPermissionsPerPage] = useState(5);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newPermission, setNewPermission] = useState<Permission>({
-    id: '',
-    name: '',
-    description: '',
-    level: '',
-  });
+  const [permissionsPerPage, setPermissionsPerPage] = useState(20);
 
   const fetchPermissions = async () => {
     try {
@@ -68,34 +61,6 @@ const PermissionList = () => {
     }
   };
 
-  const handleAddPermission = async () => {
-    // Validation simple des champs
-    if (!newPermission.name || !newPermission.description || !newPermission.level) {
-      alert('Please fill in all fields');
-      return;
-    }
-
-    try {
-      const response = await fetch('https://www.backend.lnb-intranet.globalitnet.org/roles/create-permission/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newPermission),
-      });
-      const data = await response.json();
-      if (data.success) {
-        alert('Permission added successfully!');
-        setIsModalOpen(false);
-        fetchPermissions(); // Rafraîchir la liste des permissions après ajout
-      } else {
-        alert('Failed to add permission');
-      }
-    } catch (err) {
-      setError('Error adding permission');
-    }
-  };
-
   const indexOfLastPermission = (currentPage + 1) * permissionsPerPage;
   const indexOfFirstPermission = indexOfLastPermission - permissionsPerPage;
   const currentPermissions = permissions.slice(indexOfFirstPermission, indexOfLastPermission);
@@ -131,6 +96,7 @@ const PermissionList = () => {
       <div style={{ padding: '20px', backgroundColor: '#f0f8ff', borderRadius: '8px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h1 style={{ color: '#0056b3', fontWeight: 'bold' }}>Permissions List</h1>
+          {/* Nouveau bouton pour ajouter une permission avec redirection */}
           <button
             style={{
               backgroundColor: '#026549',
@@ -142,7 +108,7 @@ const PermissionList = () => {
               display: 'flex',
               alignItems: 'center',
             }}
-            onClick={() => setIsModalOpen(true)}
+            onClick={() => window.location.href = '/users/permissions/add'} // Redirige vers le formulaire d'ajout
           >
             <FaPlus style={{ marginRight: '5px' }} />
             Ajouter
@@ -214,99 +180,6 @@ const PermissionList = () => {
             </button>
           </div>
         </div>
-
-        {/* Modal pour l'ajout de permission */}
-        {isModalOpen && (
-          <div
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: 'rgba(0, 0, 0, 0.5)',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-          >
-            <div
-              style={{
-                backgroundColor: 'white',
-                padding: '30px',
-                borderRadius: '8px',
-                width: '400px',
-                boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)',
-              }}
-            >
-              <h3>Ajouter une permission</h3>
-              <div>
-                <label htmlFor="name">Nom</label>
-                <input
-                  type="text"
-                  id="name"
-                  value={newPermission.name}
-                  onChange={(e) => setNewPermission({ ...newPermission, name: e.target.value })}
-                  style={{ width: '100%', padding: '10px', marginBottom: '15px' }}
-                />
-              </div>
-              <div>
-                <label htmlFor="description">Description</label>
-                <input
-                  type="text"
-                  id="description"
-                  value={newPermission.description}
-                  onChange={(e) => setNewPermission({ ...newPermission, description: e.target.value })}
-                  style={{ width: '100%', padding: '10px', marginBottom: '15px' }}
-                />
-              </div>
-              <div>
-                <label htmlFor="level">Level</label>
-                <select
-                  id="level"
-                  value={newPermission.level}
-                  onChange={(e) => setNewPermission({ ...newPermission, level: e.target.value })}
-                  style={{ width: '100%', padding: '10px', marginBottom: '15px' }}
-                >
-                  <option value="">Select Level</option>
-                  <option value="admin">Admin</option>
-                  <option value="read">Read</option>
-                  <option value="write">Write</option>
-                </select>
-              </div>
-
-              <div style={{ textAlign: 'center' }}>
-                <button
-                  onClick={handleAddPermission}
-                  style={{
-                    padding: '10px 20px',
-                    backgroundColor: '#28a745',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '5px',
-                    cursor: 'pointer',
-                    marginRight: '10px',
-                  }}
-                >
-                  Ajouter
-                </button>
-                <button
-                  onClick={() => setIsModalOpen(false)}
-                  style={{
-                    padding: '10px 20px',
-                    backgroundColor: '#dc3545',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '5px',
-                    cursor: 'pointer',
-                  }}
-                >
-                  Fermer
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </PageContainer>
   );

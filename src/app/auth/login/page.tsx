@@ -82,7 +82,7 @@ const Login2 = () => {
                   value={credentials.password}
                   onChange={handleChange}
                 />
-                <Link href="/mot-de-passe-oublie" passHref>
+                <Link href="/auth/forget-password" passHref>
                   <Typography sx={{ color: "#007554", cursor: "pointer", textDecoration: "underline" }}>Mot de passe oublié ?</Typography>
                 </Link>
                 <Button

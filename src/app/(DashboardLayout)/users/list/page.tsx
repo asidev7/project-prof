@@ -73,7 +73,7 @@ const UserList = () => {
       const data = await response.json();
       if (data?.success) {
         alert('Utilisateur supprimé avec succès!');
-        setUsers(users.filter(user => user.id !== userId));
+        setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
       } else {
         throw new Error('Échec de la suppression de l’utilisateur.');
       }
@@ -84,13 +84,13 @@ const UserList = () => {
 
   const handleNextPage = () => {
     if (currentPage < Math.ceil(users.length / usersPerPage)) {
-      setCurrentPage(prevPage => prevPage + 1);
+      setCurrentPage((prevPage) => prevPage + 1);
     }
   };
 
   const handlePreviousPage = () => {
     if (currentPage > 1) {
-      setCurrentPage(prevPage => prevPage - 1);
+      setCurrentPage((prevPage) => prevPage - 1);
     }
   };
 

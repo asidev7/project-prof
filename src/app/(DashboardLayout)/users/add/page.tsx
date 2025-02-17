@@ -1,9 +1,7 @@
 'use client';
-
 import React, { useState, useEffect } from 'react';
-import { FaSave } from 'react-icons/fa';
-import PageContainer from '@/app/(DashboardLayout)/components/container/PageContainer';
-import './AddUser.css';
+import { TextField, Button, Container, Typography, Paper, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
+import PageContainer from '@/app/(DashboardLayout)/components/container/PageContainer'; // Ajout de l'import
 
 interface FormData {
   nom: string;
@@ -125,156 +123,140 @@ const UserAddUser = () => {
 
   return (
     <PageContainer>
-      <div className="p-6 bg-white rounded-lg shadow-md">
-        <h1 className="text-gray-800 font-bold text-2xl mb-6">Ajouter un Utilisateur</h1>
+      <Container maxWidth="sm">
+        <Paper elevation={3} sx={{ padding: 3, marginTop: 4 }}>
+          <Typography variant="h5" gutterBottom>
+            Ajouter un Utilisateur
+          </Typography>
 
-        {message && <div className="p-4 mb-4 text-green-700 bg-green-100 rounded">{message}</div>}
-        {error && <div className="p-4 mb-4 text-red-700 bg-red-100 rounded">{error}</div>}
+          {message && <Typography variant="body2" color="success.main">{message}</Typography>}
+          {error && <Typography variant="body2" color="error.main">{error}</Typography>}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-1">
-            <input
-              type="text"
+          <form onSubmit={handleSubmit}>
+            <TextField
+              label="Nom"
               name="nom"
+              fullWidth
+              margin="normal"
               value={formData.nom}
               onChange={handleChange}
-              placeholder="Nom"
               required
-              className="w-full p-3 border rounded"
             />
-          </div>
-
-          <div className="space-y-1">
-            <input
-              type="text"
+            <TextField
+              label="Prénom"
               name="prenom"
+              fullWidth
+              margin="normal"
               value={formData.prenom}
               onChange={handleChange}
-              placeholder="Prénom"
               required
-              className="w-full p-3 border rounded"
             />
-          </div>
-
-          <div className="space-y-1">
-            <input
-              type="email"
+            <TextField
+              label="Email"
               name="email"
+              fullWidth
+              margin="normal"
+              type="email"
               value={formData.email}
               onChange={handleChange}
-              placeholder="Email"
               required
-              className="w-full p-3 border rounded"
             />
-          </div>
-
-          <div className="space-y-1">
-            <input
-              type="text"
+            <TextField
+              label="Nom d'utilisateur"
               name="username"
+              fullWidth
+              margin="normal"
               value={formData.username}
               onChange={handleChange}
-              placeholder="Nom d'utilisateur"
               required
-              className="w-full p-3 border rounded"
             />
-          </div>
-
-          <div className="space-y-1">
-            <select
-              name="role"
-              value={formData.role}
-              onChange={handleChange}
-              required
-              className="w-full p-3 border rounded"
-            >
-              <option value="">Sélectionner un rôle</option>
-              {roles.map(role => (
-                <option key={role.id} value={role.name}>{role.name}</option>
-              ))}
-            </select>
-          </div>
-
-          <div className="space-y-1">
-            <input
-              type="tel"
+            <FormControl fullWidth margin="normal">
+              <InputLabel id="role-select-label">Rôle</InputLabel>
+              <Select
+                labelId="role-select-label"
+                name="role"
+                value={formData.role}
+                onChange={handleChange}
+                required
+              >
+                <MenuItem value="">Sélectionner un rôle</MenuItem>
+                {roles.map(role => (
+                  <MenuItem key={role.id} value={role.name}>{role.name}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <TextField
+              label="Téléphone"
               name="telephone"
+              fullWidth
+              margin="normal"
               value={formData.telephone}
               onChange={handleChange}
-              placeholder="Téléphone"
-              className="w-full p-3 border rounded"
             />
-          </div>
-
-          <div className="space-y-1">
-            <input
-              type="text"
+            <TextField
+              label="Ville"
               name="adresse.city"
+              fullWidth
+              margin="normal"
               value={formData.adresse.city}
               onChange={handleChange}
-              placeholder="Ville"
               required
-              className="w-full p-3 border rounded"
             />
-          </div>
-
-          <div className="space-y-1">
-            <input
-              type="text"
+            <TextField
+              label="Pays"
               name="adresse.country"
+              fullWidth
+              margin="normal"
               value={formData.adresse.country}
               onChange={handleChange}
-              placeholder="Pays"
               required
-              className="w-full p-3 border rounded"
             />
-          </div>
-
-          <div className="space-y-1">
-            <input
-              type="date"
+            <TextField
+              label="Date de naissance"
               name="date_naissance"
+              fullWidth
+              margin="normal"
+              type="date"
               value={formData.date_naissance}
               onChange={handleChange}
-              placeholder="Date de naissance"
               required
-              className="w-full p-3 border rounded"
+              InputLabelProps={{
+                shrink: true,
+              }}
             />
-          </div>
-
-          <div className="space-y-1">
-            <input
-              type="text"
+            <TextField
+              label="Lieu de naissance"
               name="lieu_naissance"
+              fullWidth
+              margin="normal"
               value={formData.lieu_naissance}
               onChange={handleChange}
-              placeholder="Lieu de naissance"
               required
-              className="w-full p-3 border rounded"
             />
-          </div>
-
-          <div className="space-y-1">
-            <input
-              type="password"
+            <TextField
+              label="Mot de passe"
               name="password"
+              fullWidth
+              margin="normal"
+              type="password"
               value={formData.password}
               onChange={handleChange}
-              placeholder="Mot de passe"
               required
-              className="w-full p-3 border rounded"
             />
-          </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-blue-300"
-          >
-            {loading ? 'Chargement...' : <><FaSave /> Ajouter Utilisateur</>}
-          </button>
-        </form>
-      </div>
+            <Button
+              variant="contained"
+              color="primary"
+              type="submit"
+              fullWidth
+              sx={{ marginTop: 2 }}
+              disabled={loading}
+            >
+              {loading ? 'En cours...' : 'Ajouter l\'utilisateur'}
+            </Button>
+          </form>
+        </Paper>
+      </Container>
     </PageContainer>
   );
 };
