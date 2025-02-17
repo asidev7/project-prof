@@ -305,6 +305,15 @@ const Menuitems = [
     href: "/workflows/list",
     subtitle: "Gestion des flux de travail",
   },
+
+    {
+    id: uniqueId(),
+    title: "Ajouter un workflow",
+    icon: IconReportAnalytics,
+    href: "/workflows/add",
+    subtitle: "Ajout de workflow",
+  },
+
   {
     id: uniqueId(),
     title: "Tâches assignées",
@@ -319,6 +328,8 @@ const Menuitems = [
     href: "/workflows/stats",
     subtitle: "Performances des processus",
   },
+
+  
 
   {
     navlabel: true,
