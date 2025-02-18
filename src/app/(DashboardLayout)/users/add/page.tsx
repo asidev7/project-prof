@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { TextField, Button, Container, Typography, Paper, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
-import PageContainer from '@/app/(DashboardLayout)/components/container/PageContainer'; // Ajout de l'import
+import PageContainer from '@/app/(DashboardLayout)/components/container/PageContainer';
 
 interface FormData {
   nom: string;
@@ -65,7 +65,7 @@ const UserAddUser = () => {
     fetchRoles();
   }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     if (name.startsWith('adresse.')) {
       const field = name.split('.')[1];
@@ -79,7 +79,6 @@ const UserAddUser = () => {
     setValidationErrors(prev => ({ ...prev, [name]: undefined }));
   };
 
-  // Modification de la fonction formatDate pour s'assurer que le format est yyyy-dd-mm
   const formatDate = (date: string) => {
     const [year, month, day] = date.split('-');
     return `${year}-${day.padStart(2, '0')}-${month.padStart(2, '0')}`;
