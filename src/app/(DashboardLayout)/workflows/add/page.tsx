@@ -1,17 +1,18 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { TextField, Button, Container, Typography, Paper, Snackbar, Alert, MenuItem } from '@mui/material';
 import { createWorkflow } from '@/services/workflows';
 
-const WorkflowForm = () => {
+const AddWorkflowPage = () => {
+  const router = useRouter();
   const [workflowData, setWorkflowData] = useState({
     title: '',
     description: '',
     status: 'draft',
     sensitive_data: '',
   });
-
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
   const [alertSeverity, setAlertSeverity] = useState<'success' | 'error'>('success');
@@ -32,6 +33,7 @@ const WorkflowForm = () => {
       setAlertSeverity('success');
       setOpenSnackbar(true);
       setWorkflowData({ title: '', description: '', status: 'draft', sensitive_data: '' });
+      setTimeout(() => router.push('/workflows'), 2000);
     } catch (error) {
       console.error('Erreur lors de la création du workflow :', error);
       setAlertMessage("Une erreur est survenue lors de la création du workflow.");
@@ -48,7 +50,7 @@ const WorkflowForm = () => {
     <Container maxWidth="sm">
       <Paper elevation={3} sx={{ padding: 3, marginTop: 4 }}>
         <Typography variant="h5" gutterBottom>
-          Ajouter / Modifier un workflow
+          Ajouter un workflow
         </Typography>
         <form onSubmit={handleSubmit}>
           <TextField
@@ -107,4 +109,4 @@ const WorkflowForm = () => {
   );
 };
 
-export default WorkflowForm;
+export default AddWorkflowPage;

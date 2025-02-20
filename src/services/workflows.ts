@@ -90,7 +90,7 @@ export const updateTaskStatus = (id: string, data: any) => {
 };
 
 // Get tasks by workflow ID
-export const getTasksByWorkflow = (workflowId: string) => {
+export const fetchTasks = (workflowId: string) => {
   return getRequest(`/workflows/tasks/${workflowId}/`);
 };
 

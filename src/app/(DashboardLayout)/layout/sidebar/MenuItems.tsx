@@ -322,13 +322,7 @@ const Menuitems = [
     href: "/workflows/tasks",
     subtitle: "Suivi des actions en cours",
   },
-  {
-    id: uniqueId(),
-    title: "Statistiques",
-    icon: IconReportAnalytics,
-    href: "/workflows/stats",
-    subtitle: "Performances des processus",
-  },
+ 
 
   
 
